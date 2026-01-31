@@ -14,6 +14,7 @@ export class EntryEditor {
         this.onSave = options.onSave || null;
         this.onNameChange = options.onNameChange || null;
         this.onLinkClick = options.onLinkClick || null;
+        this.onDelete = options.onDelete || null;
         this.getEntries = options.getEntries || (() => []);
         this.editorInstance = null;
     }
@@ -49,6 +50,7 @@ export class EntryEditor {
                         value="${this.item.data.name || ''}" class="input-title entry-title">
                     <span id="entry-category-badge" class="badge" 
                         style="background:${cat.color}; color:#fff;">${cat.label}</span>
+                    <button id="btn-delete-entry" class="btn btn-ghost btn-sm" title="Delete Entry" style="margin-left:auto;">🗑️</button>
                 </div>
                 
                 <div id="metadata-fields" class="metadata-grid"></div>
@@ -117,6 +119,16 @@ export class EntryEditor {
                 if (this.onNameChange) this.onNameChange(this.item);
             }, 300);
         };
+
+        // Delete
+        const deleteBtn = this.container.querySelector('#btn-delete-entry');
+        if (deleteBtn) {
+            deleteBtn.onclick = () => {
+                if (confirm(`Delete "${this.item.data.name || 'this entry'}"?`)) {
+                    if (this.onDelete) this.onDelete(this.item);
+                }
+            };
+        }
     }
 
     async save() {

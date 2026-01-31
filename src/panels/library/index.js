@@ -69,6 +69,17 @@ export const LibraryPanel = {
                 );
                 if (target) LibraryPanel.selectItem(target, editorEl, relationshipsEl);
             },
+            onDelete: async (item) => {
+                await VaultDB.deleteItem(item.id);
+                // Remove from local list
+                LibraryPanel.allItems = LibraryPanel.allItems.filter(i => i.id !== item.id);
+                // Update UI
+                LibraryPanel.entryList.setItems(LibraryPanel.allItems);
+                LibraryPanel.entryEditor.showEmpty();
+                relationshipsEl.style.display = 'none';
+                // Clear state
+                State.updateSession({ activeEntryId: null });
+            },
             getEntries: () => LibraryPanel.allItems
         });
         LibraryPanel.entryEditor.showEmpty();

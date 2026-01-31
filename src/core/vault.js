@@ -254,5 +254,20 @@ export const VaultDB = {
         });
     },
 
-    // ... (Additional methods like delete, update would go here)
+    /**
+     * Delete an item by ID
+     * @param {string} id 
+     */
+    deleteItem: function (id) {
+        return new Promise((resolve, reject) => {
+            if (!db) { reject(new Error('VaultDB not initialized')); return; }
+
+            const tx = db.transaction(ITEMS_STORE, 'readwrite');
+            const store = tx.objectStore(ITEMS_STORE);
+            const request = store.delete(id);
+
+            request.onsuccess = () => resolve();
+            request.onerror = (e) => reject(e.target.error);
+        });
+    }
 };
