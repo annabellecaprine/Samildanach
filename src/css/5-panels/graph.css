@@ -1,0 +1,46 @@
+/* 
+   Layer 5: Panels - Graph
+   Visual World Graph
+*/
+
+.graph-layout {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-app);
+}
+
+.graph-toolbar {
+    padding: 12px;
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.graph-toolbar-icon {
+    font-size: 18px;
+}
+
+.graph-toolbar-title {
+    font-weight: bold;
+    color: var(--text-primary);
+}
+
+.graph-container {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+}
+
+.graph-canvas {
+    position: absolute;
+    inset: 0;
+}
+
+.graph-nodes {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}

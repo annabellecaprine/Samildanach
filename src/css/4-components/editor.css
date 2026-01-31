@@ -1,0 +1,107 @@
+/* 
+   Layer 4: Components - Rich Text Editor
+*/
+
+.rte-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Toolbar */
+.rte-toolbar {
+    padding: 8px;
+    background: var(--bg-surface);
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.rte-btn {
+    padding: 4px 8px;
+    cursor: pointer;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-strong);
+    border-radius: 3px;
+    color: var(--text-primary);
+    font-size: 13px;
+    transition: all 0.15s;
+}
+
+.rte-btn:hover {
+    background: var(--bg-surface);
+    border-color: var(--accent-primary);
+}
+
+.rte-btn-bold {
+    font-weight: bold;
+}
+
+.rte-btn-italic {
+    font-style: italic;
+}
+
+.rte-divider {
+    width: 1px;
+    background: var(--border-subtle);
+    margin: 0 4px;
+}
+
+/* Content Area */
+.rte-content {
+    flex: 1;
+    padding: 16px;
+    background: var(--bg-input);
+    color: var(--text-primary);
+    outline: none;
+    overflow-y: auto;
+    line-height: 1.6;
+}
+
+.rte-content:focus {
+    outline: none;
+}
+
+/* Wiki Links */
+.wiki-link {
+    color: var(--accent-primary);
+    cursor: pointer;
+    text-decoration: underline;
+    font-weight: 500;
+}
+
+.wiki-link:hover {
+    filter: brightness(1.2);
+}
+
+/* Autocomplete */
+.rte-autocomplete {
+    display: none;
+    position: absolute;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-strong);
+    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 100;
+    width: 200px;
+}
+
+.rte-autocomplete-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-primary);
+    transition: background 0.1s;
+}
+
+.rte-autocomplete-item:hover,
+.rte-autocomplete-item.selected {
+    background: var(--bg-surface);
+}

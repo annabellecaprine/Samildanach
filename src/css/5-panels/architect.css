@@ -1,0 +1,141 @@
+/* 
+   Module: Architect Panel (Node Editor)
+*/
+
+/* The Main Canvas Container */
+.architect-workspace {
+    width: 100%;
+    height: 100%;
+    background-color: #1a1a24;
+    /* Very dark slate for contrast */
+    background-image:
+        radial-gradient(circle, var(--border-subtle) 1px, transparent 1px);
+    background-size: 24px 24px;
+    /* Grid dots */
+    overflow: hidden;
+    position: relative;
+    user-select: none;
+}
+
+/* The Movable/Zoomable Layer */
+.node-layer {
+    transform-origin: 0 0;
+    pointer-events: none;
+    /* Let clicks pass through to nodes */
+    width: 100%;
+    height: 100%;
+}
+
+.node-layer>* {
+    pointer-events: auto;
+    /* Re-enable events for children */
+}
+
+/* SVG Connection Layer */
+.connection-layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.connection-line {
+    fill: none;
+    stroke: var(--text-muted);
+    stroke-width: 2px;
+}
+
+.connection-line.active {
+    stroke: var(--accent-primary);
+}
+
+/* Individual Node */
+.node {
+    position: absolute;
+    width: 200px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    z-index: 1;
+}
+
+.node.selected {
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px var(--accent-primary);
+}
+
+.node-header {
+    background: var(--bg-panel);
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border-subtle);
+    border-radius: 6px 6px 0 0;
+    font-weight: bold;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    cursor: grab;
+}
+
+.node-header:active {
+    cursor: grabbing;
+}
+
+.node-body {
+    padding: 12px;
+    font-size: 12px;
+}
+
+/* Sockets (Inputs/Outputs) */
+.socket-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 4px 0;
+    height: 24px;
+}
+
+.socket {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--text-muted);
+    border: 2px solid var(--bg-surface);
+    cursor: crosshair;
+    transition: transform 0.1s;
+}
+
+.socket:hover {
+    transform: scale(1.2);
+    background: var(--text-primary);
+}
+
+.socket.input {
+    margin-left: -18px;
+}
+
+/* Pull outside left */
+.socket.output {
+    margin-right: -18px;
+}
+
+/* Pull outside right */
+
+/* Toolbar */
+.architect-toolbar {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background: var(--bg-panel);
+    padding: 8px;
+    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+}

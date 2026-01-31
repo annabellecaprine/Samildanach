@@ -1,0 +1,337 @@
+/* 
+   Layer 4: Components
+   Reusable UI component styles
+*/
+
+/* --- Buttons --- */
+.btn {
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn-primary {
+    background: var(--accent-primary);
+    color: var(--bg-app);
+}
+
+.btn-primary:hover {
+    filter: brightness(1.1);
+}
+
+.btn-secondary {
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-subtle);
+}
+
+.btn-secondary:hover {
+    background: var(--bg-panel);
+    color: var(--text-primary);
+}
+
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    color: var(--text-secondary);
+    cursor: pointer;
+}
+
+.btn-icon:hover {
+    background: var(--bg-panel);
+    color: var(--text-primary);
+}
+
+/* --- Inputs --- */
+.input {
+    padding: 8px 12px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.input:focus {
+    border-color: var(--accent-primary);
+}
+
+.input-title {
+    font-size: 24px;
+    font-weight: bold;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    color: var(--text-primary);
+    outline: none;
+    padding-bottom: 4px;
+    transition: border-color 0.2s;
+}
+
+.input-title:focus {
+    border-bottom-color: var(--accent-primary);
+}
+
+.textarea {
+    padding: 8px 12px;
+    background: var(--bg-input);
+    border: 1px solid var(--border-subtle);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-size: 13px;
+    resize: vertical;
+    min-height: 60px;
+    outline: none;
+}
+
+.textarea:focus {
+    border-color: var(--accent-primary);
+}
+
+/* --- Labels --- */
+.label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+/* --- Cards --- */
+.card {
+    background: var(--bg-surface);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.card-bordered {
+    border: 1px solid var(--border-subtle);
+}
+
+/* --- Badges --- */
+.badge {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+/* --- Modals --- */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: var(--bg-panel);
+    padding: 24px;
+    border-radius: 12px;
+    width: 400px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+/* --- Lists --- */
+.list-item {
+    padding: 8px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    transition: background 0.15s;
+}
+
+.list-item:hover {
+    background: var(--bg-surface);
+}
+
+.list-item.active {
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    font-weight: bold;
+}
+
+/* --- Tabs --- */
+.tab {
+    padding: 4px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 11px;
+    border: 1px solid var(--border-subtle);
+    background: var(--bg-surface);
+    color: var(--text-secondary);
+    transition: all 0.2s;
+}
+
+.tab:hover {
+    border-color: var(--accent-primary);
+}
+
+.tab.active {
+    background: var(--accent-primary);
+    color: var(--bg-app);
+    border-color: var(--accent-primary);
+}
+
+/* --- Dividers --- */
+.divider {
+    height: 1px;
+    background: var(--border-subtle);
+    margin: 16px 0;
+}
+
+.divider-vertical {
+    width: 1px;
+    background: var(--border-subtle);
+    margin: 0 8px;
+    align-self: stretch;
+}
+
+/* --- Toolbar --- */
+.toolbar {
+    padding: 12px;
+    background: var(--bg-panel);
+    border-bottom: 1px solid var(--border-subtle);
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.toolbar-title {
+    font-weight: bold;
+    color: var(--text-primary);
+}
+
+.toolbar-spacer {
+    flex: 1;
+}
+
+/* --- Status Text --- */
+.text-muted {
+    color: var(--text-muted);
+}
+
+.text-sm {
+    font-size: 12px;
+}
+
+.text-xs {
+    font-size: 11px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+/* --- Empty State --- */
+.empty-state {
+    margin: auto;
+    text-align: center;
+    color: var(--text-muted);
+    padding: 40px;
+}
+
+.empty-state h2 {
+    margin-bottom: 8px;
+    color: var(--text-secondary);
+}
+
+/* --- Grid Layouts --- */
+.grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.grid-auto {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+}
+
+/* --- Flex Helpers --- */
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.flex-1 {
+    flex: 1;
+}
+
+.gap-sm {
+    gap: 4px;
+}
+
+.gap-md {
+    gap: 8px;
+}
+
+.gap-lg {
+    gap: 16px;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-end {
+    justify-content: flex-end;
+}
