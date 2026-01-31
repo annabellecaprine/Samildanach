@@ -12,16 +12,30 @@ export const GrimoirePanel = {
     label: 'Grimoire',
     icon: '📖',
 
+    // Shared state across renders
+    _state: {
+        activeCategory: 'item',
+        selectedRuleId: null
+    },
+
     render: async (container) => {
         await RulesDB.init();
-        const rules = await RulesDB.list();
+
+        // Reload rules from DB each render
+        let rules = await RulesDB.list();
         const categories = getAllRuleCategories();
 
-        let activeCategory = categories[0]?.id || 'item';
-        let selectedRule = null;
+        // Restore state
+        let activeCategory = GrimoirePanel._state.activeCategory || categories[0]?.id || 'item';
+        let selectedRuleId = GrimoirePanel._state.selectedRuleId;
+        let selectedRule = selectedRuleId ? rules.find(r => r.id === selectedRuleId) : null;
         let editorInstance = null;
 
-        function renderPanel() {
+        async function renderPanel() {
+            // Refresh from DB to ensure we have latest
+            rules = await RulesDB.list();
+            selectedRule = selectedRuleId ? rules.find(r => r.id === selectedRuleId) : null;
+
             const catRules = rules.filter(r => r.type === activeCategory);
             const cat = getRuleCategoryById(activeCategory);
 
@@ -115,7 +129,10 @@ export const GrimoirePanel = {
             container.querySelectorAll('.cat-tab').forEach(tab => {
                 tab.onclick = () => {
                     activeCategory = tab.dataset.cat;
+                    selectedRuleId = null;
                     selectedRule = null;
+                    GrimoirePanel._state.activeCategory = activeCategory;
+                    GrimoirePanel._state.selectedRuleId = null;
                     renderPanel();
                 };
             });
@@ -123,8 +140,9 @@ export const GrimoirePanel = {
             // Bind rule list
             container.querySelectorAll('.rule-item').forEach(item => {
                 item.onclick = () => {
-                    const id = item.dataset.id;
-                    selectedRule = rules.find(r => r.id === id);
+                    selectedRuleId = item.dataset.id;
+                    selectedRule = rules.find(r => r.id === selectedRuleId);
+                    GrimoirePanel._state.selectedRuleId = selectedRuleId;
                     renderPanel();
                 };
             });
@@ -135,8 +153,9 @@ export const GrimoirePanel = {
                     name: `New ${cat?.label || 'Rule'}`,
                     description: ''
                 });
-                rules.push(newRule);
-                selectedRule = newRule;
+                console.log('[Grimoire] Created rule:', newRule.id);
+                selectedRuleId = newRule.id;
+                GrimoirePanel._state.selectedRuleId = selectedRuleId;
                 renderPanel();
             });
 
@@ -146,9 +165,10 @@ export const GrimoirePanel = {
                 if (!confirm(`Delete "${selectedRule.data.name || 'this rule'}"?`)) return;
 
                 await RulesDB.delete(selectedRule.id);
-                const idx = rules.findIndex(r => r.id === selectedRule.id);
-                if (idx >= 0) rules.splice(idx, 1);
+                console.log('[Grimoire] Deleted rule:', selectedRule.id);
+                selectedRuleId = null;
                 selectedRule = null;
+                GrimoirePanel._state.selectedRuleId = null;
                 renderPanel();
             });
 
@@ -156,7 +176,7 @@ export const GrimoirePanel = {
             container.querySelector('#btn-save-rule')?.addEventListener('click', async () => {
                 if (!selectedRule) return;
 
-                // Gather data
+                // Gather data from form
                 const name = container.querySelector('#rule-name')?.value || '';
                 const data = { name };
 
@@ -168,13 +188,12 @@ export const GrimoirePanel = {
                     data.description = editorInstance.getValue();
                 }
 
+                // Update rule object
                 selectedRule.data = data;
                 await RulesDB.update(selectedRule);
+                console.log('[Grimoire] Saved rule:', selectedRule.id, data);
 
-                // Update local cache
-                const idx = rules.findIndex(r => r.id === selectedRule.id);
-                if (idx >= 0) rules[idx] = selectedRule;
-
+                // Re-render to show updated name in list
                 renderPanel();
             });
 
@@ -191,6 +210,6 @@ export const GrimoirePanel = {
             }
         }
 
-        renderPanel();
+        await renderPanel();
     }
 };
