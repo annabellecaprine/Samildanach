@@ -49,6 +49,14 @@
     box-shadow: inset 2px 0 0 0 var(--accent-primary);
 }
 
+/* Sidebar Divider */
+.nav-divider {
+    width: 32px;
+    height: 1px;
+    background: var(--border-subtle);
+    margin: 4px 0;
+}
+
 /* Bottom Actions */
 .sidebar-bottom {
     margin-top: auto;

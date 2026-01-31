@@ -85,6 +85,14 @@ export const UI = {
         Object.keys(this.panels).forEach(id => {
             const panel = this.panels[id];
 
+            // Check for divider marker
+            if (id === 'divider' || panel.divider) {
+                const divider = document.createElement('div');
+                divider.className = 'nav-divider';
+                navContainer.appendChild(divider);
+                return;
+            }
+
             const item = document.createElement('div');
             item.className = 'nav-item';
             item.innerHTML = panel.icon || '📦';
