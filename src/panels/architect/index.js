@@ -1,10 +1,11 @@
 /**
  * Panel: Architect
- * The Visual Rules Editor.
+ * The Visual Rules Editor with named flows and node wiring.
  */
 
 import { NodeCanvas } from './components/canvas.js';
 import { NodePicker } from './components/NodePicker.js';
+import { FlowsDB } from '../../core/flows-db.js';
 import { Utils } from '../../core/utils.js';
 
 export const ArchitectPanel = {
@@ -12,117 +13,181 @@ export const ArchitectPanel = {
     label: 'Architect',
     icon: '📐',
 
+    // Persist active flow across renders
+    _state: {
+        activeFlowId: null
+    },
+
     /**
      * Render the panel content
      * @param {HTMLElement} container 
      * @param {Object} state 
      */
-    render: (container, state) => {
+    render: async (container, state) => {
         container.style.padding = '0';
 
-        container.innerHTML = `
-            <div class="architect-workspace" id="arch-workspace">
-                <div class="connection-layer" id="arch-connections">
-                    <svg width="100%" height="100%" id="arch-svg"></svg>
-                </div>
-                <div class="node-layer" id="arch-nodes"></div>
-                
-                <div class="architect-toolbar">
-                    <button class="btn btn-primary" id="btn-add-node">+ Add Node</button>
-                    <button class="btn btn-secondary" id="btn-reset-view">Center</button>
-                    <button class="btn btn-secondary" id="btn-clear-all">Clear</button>
-                    <div class="toolbar-divider"></div>
-                    <span class="toolbar-hint">Pan: Middle Click / Alt+Drag</span>
-                </div>
-            </div>
-        `;
+        await FlowsDB.init();
+        let flows = await FlowsDB.list();
 
-        const workspace = container.querySelector('#arch-workspace');
-        const nodeLayer = container.querySelector('#arch-nodes');
-        const svgLayer = container.querySelector('#arch-svg');
-
-        const canvas = new NodeCanvas(workspace, nodeLayer, svgLayer);
-        canvas.init();
-
-        // Node Picker
-        const nodePicker = new NodePicker({
-            onSelect: (nodeData) => {
-                canvas.addNode({
-                    id: Utils.generateId('node'),
-                    x: 100 + (Math.random() * 100),
-                    y: 100 + (Math.random() * 100),
-                    type: nodeData.type,
-                    title: nodeData.title,
-                    inputs: nodeData.inputs || [],
-                    outputs: nodeData.outputs || [],
-                    entryId: nodeData.entryId || null,
-                    entryType: nodeData.entryType || null
-                });
+        // Restore or create default flow
+        let activeFlowId = ArchitectPanel._state.activeFlowId;
+        if (!activeFlowId || !flows.find(f => f.id === activeFlowId)) {
+            if (flows.length === 0) {
+                // Create default flow
+                const defaultFlow = await FlowsDB.create('Main Flow');
+                flows = [defaultFlow];
             }
-        });
-
-        container.querySelector('#btn-add-node').onclick = () => {
-            nodePicker.show();
-        };
-
-        container.querySelector('#btn-reset-view').onclick = () => {
-            canvas.resetView();
-        };
-
-        container.querySelector('#btn-clear-all').onclick = () => {
-            if (confirm('Clear all nodes?')) {
-                canvas.nodes = [];
-                canvas.links = [];
-                nodeLayer.innerHTML = '';
-                svgLayer.innerHTML = '';
-                canvas.notifyChange();
-            }
-        };
-
-        // Persistence
-        const STORAGE_KEY = 'samildanach_architect_layout';
-
-        canvas.onDataChange = (data) => {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-        };
-
-        const saved = localStorage.getItem(STORAGE_KEY);
-        if (saved) {
-            try {
-                const data = JSON.parse(saved);
-                canvas.importData(data);
-            } catch (e) {
-                console.error("Failed to load architect layout:", e);
-                addDemoNodes();
-            }
-        } else {
-            addDemoNodes();
+            activeFlowId = flows[0].id;
+            ArchitectPanel._state.activeFlowId = activeFlowId;
         }
 
-        function addDemoNodes() {
-            if (canvas.nodes.length === 0) {
-                canvas.addNode({
-                    id: 'start', x: 50, y: 50,
-                    type: 'event',
-                    title: 'On Attack',
-                    inputs: ['attacker', 'target'],
-                    outputs: ['next']
-                });
-                canvas.addNode({
-                    id: 'd20', x: 300, y: 100,
-                    type: 'action',
-                    title: 'Roll Dice',
-                    inputs: ['expression'],
-                    outputs: ['result', 'next']
-                });
-                canvas.addNode({
-                    id: 'check', x: 550, y: 50,
-                    type: 'condition',
-                    title: 'Compare Roll',
-                    inputs: ['roll', 'dc'],
-                    outputs: ['success', 'failure']
+        let activeFlow = await FlowsDB.get(activeFlowId);
+        let canvas = null;
+
+        async function render() {
+            flows = await FlowsDB.list();
+            activeFlow = await FlowsDB.get(activeFlowId);
+
+            container.innerHTML = `
+                <div class="architect-workspace" id="arch-workspace">
+                    <div class="connection-layer" id="arch-connections">
+                        <svg width="100%" height="100%" id="arch-svg"></svg>
+                    </div>
+                    <div class="node-layer" id="arch-nodes"></div>
+                    
+                    <div class="architect-toolbar">
+                        <div class="toolbar-group">
+                            <select id="flow-selector" class="input input-sm">
+                                ${flows.map(f => `
+                                    <option value="${f.id}" ${f.id === activeFlowId ? 'selected' : ''}>
+                                        ${f.name}
+                                    </option>
+                                `).join('')}
+                            </select>
+                            <button class="btn btn-ghost btn-sm" id="btn-new-flow" title="New Flow">📂+</button>
+                            <button class="btn btn-ghost btn-sm" id="btn-rename-flow" title="Rename">✏️</button>
+                            <button class="btn btn-ghost btn-sm" id="btn-delete-flow" title="Delete Flow">🗑️</button>
+                        </div>
+                        <div class="toolbar-divider"></div>
+                        <button class="btn btn-primary btn-sm" id="btn-add-node">+ Add Node</button>
+                        <button class="btn btn-secondary btn-sm" id="btn-reset-view">Center</button>
+                        <button class="btn btn-secondary btn-sm" id="btn-clear-all">Clear</button>
+                        <div class="toolbar-spacer"></div>
+                        <span class="toolbar-hint">Drag sockets to connect • Middle-click to pan</span>
+                    </div>
+                </div>
+            `;
+
+            const workspace = container.querySelector('#arch-workspace');
+            const nodeLayer = container.querySelector('#arch-nodes');
+            const svgLayer = container.querySelector('#arch-svg');
+
+            canvas = new NodeCanvas(workspace, nodeLayer, svgLayer);
+            canvas.init();
+
+            // Load flow data into canvas
+            if (activeFlow) {
+                canvas.importData({
+                    nodes: activeFlow.nodes || [],
+                    links: activeFlow.links || [],
+                    transform: activeFlow.transform || { x: 0, y: 0, scale: 1 }
                 });
             }
+
+            // Auto-save on canvas change
+            canvas.onDataChange = async (data) => {
+                if (activeFlow) {
+                    activeFlow.nodes = data.nodes;
+                    activeFlow.links = data.links;
+                    activeFlow.transform = data.transform;
+                    await FlowsDB.update(activeFlow);
+                }
+            };
+
+            // Flow selector
+            container.querySelector('#flow-selector').onchange = async (e) => {
+                activeFlowId = e.target.value;
+                ArchitectPanel._state.activeFlowId = activeFlowId;
+                render();
+            };
+
+            // New Flow
+            container.querySelector('#btn-new-flow').onclick = async () => {
+                const name = prompt('Flow name:', 'New Flow');
+                if (!name) return;
+
+                const newFlow = await FlowsDB.create(name);
+                activeFlowId = newFlow.id;
+                ArchitectPanel._state.activeFlowId = activeFlowId;
+                render();
+            };
+
+            // Rename Flow
+            container.querySelector('#btn-rename-flow').onclick = async () => {
+                if (!activeFlow) return;
+                const name = prompt('Rename flow:', activeFlow.name);
+                if (!name) return;
+
+                activeFlow.name = name;
+                await FlowsDB.update(activeFlow);
+                render();
+            };
+
+            // Delete Flow
+            container.querySelector('#btn-delete-flow').onclick = async () => {
+                if (!activeFlow) return;
+                if (flows.length <= 1) {
+                    alert('Cannot delete the last flow.');
+                    return;
+                }
+                if (!confirm(`Delete "${activeFlow.name}"?`)) return;
+
+                await FlowsDB.delete(activeFlow.id);
+                flows = await FlowsDB.list();
+                activeFlowId = flows[0]?.id;
+                ArchitectPanel._state.activeFlowId = activeFlowId;
+                render();
+            };
+
+            // Node Picker
+            const nodePicker = new NodePicker({
+                onSelect: (nodeData) => {
+                    canvas.addNode({
+                        id: Utils.generateId('node'),
+                        x: 100 + (Math.random() * 100),
+                        y: 100 + (Math.random() * 100),
+                        type: nodeData.type,
+                        title: nodeData.title,
+                        inputs: nodeData.inputs || [],
+                        outputs: nodeData.outputs || [],
+                        entryId: nodeData.entryId || null,
+                        entryType: nodeData.entryType || null,
+                        ruleId: nodeData.ruleId || null,
+                        ruleType: nodeData.ruleType || null,
+                        flowId: nodeData.flowId || null // For compound nodes
+                    });
+                }
+            });
+
+            container.querySelector('#btn-add-node').onclick = () => {
+                nodePicker.show();
+            };
+
+            container.querySelector('#btn-reset-view').onclick = () => {
+                canvas.resetView();
+            };
+
+            container.querySelector('#btn-clear-all').onclick = async () => {
+                if (confirm('Clear all nodes in this flow?')) {
+                    canvas.nodes = [];
+                    canvas.links = [];
+                    nodeLayer.innerHTML = '';
+                    svgLayer.innerHTML = '';
+                    canvas.notifyChange();
+                }
+            };
         }
+
+        await render();
     }
 };

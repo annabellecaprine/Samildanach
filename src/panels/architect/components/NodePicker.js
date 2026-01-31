@@ -7,6 +7,7 @@
 import { Modal } from '../../../components/modal/index.js';
 import { VaultDB } from '../../../core/vault.js';
 import { RulesDB } from '../../../core/rules-db.js';
+import { FlowsDB } from '../../../core/flows-db.js';
 import { getCategoryById, getAllCategories } from '../../../core/categories.js';
 import { getRuleCategoryById, getAllRuleCategories } from '../../../core/rules-categories.js';
 
@@ -66,6 +67,14 @@ export const NODE_TYPES = {
         color: '#f59e0b',
         description: 'Link to Grimoire entries (items, spells, abilities)',
         templates: [] // Populated dynamically from RulesDB
+    },
+    compound: {
+        id: 'compound',
+        label: 'Flows',
+        icon: '📦',
+        color: '#06b6d4',
+        description: 'Reuse entire flows as single nodes',
+        templates: [] // Populated dynamically from FlowsDB
     }
 };
 
@@ -166,6 +175,41 @@ export class NodePicker {
                                 ruleType: rule.type,
                                 inputs: ['in'],
                                 outputs: ['out', 'effect']
+                            });
+                        }
+                        modal.close();
+                    };
+                    grid.appendChild(btn);
+                });
+
+                panels.appendChild(grid);
+            } else if (typeId === 'compound') {
+                // Load Saved Flows
+                await FlowsDB.init();
+                const flows = await FlowsDB.list();
+
+                if (flows.length === 0) {
+                    panels.innerHTML = '<div class="text-muted">No saved flows found. Create a flow first.</div>';
+                    return;
+                }
+
+                const grid = document.createElement('div');
+                grid.className = 'grid-2';
+                grid.style.gap = '8px';
+
+                flows.forEach(flow => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn btn-secondary';
+                    btn.style.cssText = 'justify-content:flex-start; padding:8px 12px; text-align:left;';
+                    btn.innerHTML = `<span style="margin-right:8px;">📦</span> ${flow.name}`;
+                    btn.onclick = () => {
+                        if (this.onSelect) {
+                            this.onSelect({
+                                type: 'compound',
+                                title: `📦 ${flow.name}`,
+                                flowId: flow.id,
+                                inputs: (flow.exposedInputs || []).map(i => i.label || i.socket),
+                                outputs: (flow.exposedOutputs || []).map(o => o.label || o.socket)
                             });
                         }
                         modal.close();
