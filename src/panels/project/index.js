@@ -46,11 +46,10 @@ export const ProjectPanel = {
                             <input id="proj-title" type="text" value="${State.project.title}" 
                                 placeholder="Setting Title" class="project-title flex-1">
                         </div>
-                        <div class="project-author" style="margin-right: 16px;">
+                        <div class="project-author">
                             <input id="proj-author" type="text" value="${State.project.author}" 
                                 placeholder="Author Name">
                         </div>
-                        <button id="btn-tour" class="btn-icon" title="Start Tour" style="border-radius: 50%;">❓</button>
                     </div>
 
                     <!-- Stats Cards -->
@@ -124,10 +123,7 @@ export const ProjectPanel = {
             el.oninput = save;
         });
 
-        // Tour Button
-        container.querySelector('#btn-tour').onclick = () => {
-            Tour.start('getting-started');
-        };
+
 
         // Export - includes State
         container.querySelector('#btn-export').onclick = async () => {

@@ -6,6 +6,7 @@
 import { UI } from './core/ui.js';
 import { State } from './core/state.js';
 import { Toast } from './components/toast/index.js';
+import { Tour } from './components/tour/index.js';
 
 // Import Panels
 import { ProjectPanel } from './panels/project/index.js';
@@ -57,6 +58,12 @@ async function init() {
     // If no saved panel, default to Project (Home)
     if (!UI.activePanelId) {
         UI.switchPanel(ProjectPanel.id);
+    }
+
+    // Bind Global Tour Button
+    const tourBtn = document.getElementById('global-tour-btn');
+    if (tourBtn) {
+        tourBtn.onclick = () => Tour.start('getting-started');
     }
 }
 
