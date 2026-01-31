@@ -11,7 +11,6 @@ import { Exporter } from '../../core/exporter.js';
 import { State } from '../../core/state.js';
 import { getAllCategories } from '../../core/categories.js';
 import { Toast } from '../../components/toast/index.js';
-import { Tour } from '../../components/tour/index.js';
 
 export const ProjectPanel = {
     id: 'project',
@@ -40,12 +39,10 @@ export const ProjectPanel = {
                 <div class="project-content">
                     
                     <!-- Header -->
-                    <div class="project-header flex justify-between items-center">
-                        <div class="flex items-center gap-md flex-1">
-                            <div class="project-icon">📖</div>
-                            <input id="proj-title" type="text" value="${State.project.title}" 
-                                placeholder="Setting Title" class="project-title flex-1">
-                        </div>
+                    <div class="project-header">
+                        <div class="project-icon">📖</div>
+                        <input id="proj-title" type="text" value="${State.project.title}" 
+                            placeholder="Setting Title" class="project-title">
                         <div class="project-author">
                             <input id="proj-author" type="text" value="${State.project.author}" 
                                 placeholder="Author Name">
