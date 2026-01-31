@@ -135,12 +135,12 @@ export const LaboratoryPanel = {
                 simRun.innerText = 'Run';
 
                 if (result.error) {
-                    simResults.style.display = 'none';
+                    simResults.classList.add('hidden');
                     Toast.show(result.error, 'error');
                     return;
                 }
 
-                simResults.style.display = 'block';
+                simResults.classList.remove('hidden');
 
                 // Stats
                 container.querySelector('#stat-min').innerText = result.stats.min;
@@ -177,12 +177,12 @@ export const LaboratoryPanel = {
             const result = Simulator.compare(expr1, expr2, 1000);
 
             if (result.error) {
-                cmpResults.style.display = 'none';
+                cmpResults.classList.add('hidden');
                 Toast.show(result.error, 'error');
                 return;
             }
 
-            cmpResults.style.display = 'block';
+            cmpResults.classList.remove('hidden');
             cmpResults.innerHTML = `
                 <div class="compare-stat">
                     <strong>${Utils.escapeHtml(expr1)}</strong> wins <span class="highlight">${result.comparison.win1Pct}%</span> of the time

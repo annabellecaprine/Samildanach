@@ -137,11 +137,13 @@ export const SettingsPanel = {
             container.querySelector('#cfg-baseurl').value = config?.baseUrl || '';
 
             testResult.innerHTML = '';
-            editor.style.display = 'flex';
+            // editor.style.display = 'flex';
+            editor.classList.remove('hidden');
         }
 
         function closeEditor() {
-            editor.style.display = 'none';
+            // editor.style.display = 'none';
+            editor.classList.add('hidden');
             editingId = null;
         }
 

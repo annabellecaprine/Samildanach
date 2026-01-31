@@ -77,7 +77,7 @@ export const LibraryPanel = {
                 // Update UI
                 LibraryPanel.entryList.setItems(LibraryPanel.allItems);
                 LibraryPanel.entryEditor.showEmpty();
-                relationshipsEl.style.display = 'none';
+                relationshipsEl.classList.add('hidden');
                 // Clear state
                 State.updateSession({ activeEntryId: null });
             },
@@ -108,7 +108,7 @@ export const LibraryPanel = {
         LibraryPanel.entryList.setActiveItem(item.id);
         LibraryPanel.entryEditor.setItem(item);
 
-        relationshipsEl.style.display = 'block';
+        relationshipsEl.classList.remove('hidden');
         LibraryPanel.relationshipManager.setItem(item, LibraryPanel.allItems);
 
         // Save to State
