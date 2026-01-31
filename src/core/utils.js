@@ -73,3 +73,6 @@ export const Utils = {
         return str.substring(0, maxLength - 3) + '...';
     }
 };
+
+// Convenience export for common function
+export const generateId = Utils.generateId;

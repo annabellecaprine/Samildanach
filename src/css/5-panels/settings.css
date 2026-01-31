@@ -1,0 +1,172 @@
+/* 
+   Layer 5: Panels - Settings
+   API configuration management
+*/
+
+.settings-layout {
+    height: 100%;
+    overflow-y: auto;
+    background: var(--bg-app);
+}
+
+.settings-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.settings-title {
+    font-size: 24px;
+    margin-bottom: 24px;
+    color: var(--accent-primary);
+}
+
+.settings-section {
+    background: var(--bg-surface);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+    margin-bottom: 24px;
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+/* Configs List */
+.configs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.config-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    background: var(--bg-app);
+    border: 2px solid var(--border-subtle);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.config-card:hover {
+    border-color: var(--border-default);
+}
+
+.config-card.active {
+    border-color: var(--accent-primary);
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), transparent);
+}
+
+.config-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.config-provider {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+.config-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+}
+
+.empty-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+    opacity: 0.5;
+}
+
+.empty-text {
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.empty-hint {
+    font-size: 12px;
+    opacity: 0.7;
+}
+
+/* Editor Modal */
+.config-editor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.editor-content {
+    background: var(--bg-surface);
+    border-radius: 12px;
+    padding: 24px;
+    width: 400px;
+    max-width: 90vw;
+    border: 1px solid var(--border-subtle);
+}
+
+.editor-title {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: var(--accent-primary);
+}
+
+.field-group {
+    margin-bottom: 16px;
+}
+
+.field-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+}
+
+.editor-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+    align-items: center;
+}
+
+/* Test Results */
+.test-result {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 13px;
+}
+
+.test-pending {
+    color: var(--text-muted);
+}
+
+.test-success {
+    color: var(--status-success);
+}
+
+.test-error {
+    color: var(--status-error);
+}
