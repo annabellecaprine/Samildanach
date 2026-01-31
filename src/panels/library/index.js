@@ -25,6 +25,7 @@ export const LibraryPanel = {
     activeItem: null,
 
     render: async (container, state) => {
+        container.innerHTML = `<div class="loading-container"><div class="spinner spinner-lg"></div><div class="text-muted">Loading Library...</div></div>`;
         try {
             await VaultDB.init();
         } catch (e) {

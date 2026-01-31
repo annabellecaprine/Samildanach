@@ -125,13 +125,24 @@ export const ProjectPanel = {
 
         // Export - includes State
         container.querySelector('#btn-export').onclick = async () => {
+            const btn = container.querySelector('#btn-export');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<span class="spinner"></span> Exporting...`;
+
             try {
+                // Yield to UI
+                await new Promise(r => setTimeout(r, 50));
+
                 const projectName = (State.project.title || 'samildanach').toLowerCase().replace(/\s+/g, '-');
                 const json = await Exporter.toJSON();
                 Exporter.download(JSON.stringify(json, null, 2), `${projectName}.json`, 'application/json');
                 Toast.show('Project exported successfully', 'success');
             } catch (e) {
                 Toast.show('Export failed: ' + e.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
             }
         };
 
@@ -142,6 +153,14 @@ export const ProjectPanel = {
         fileInput.onchange = async (e) => {
             const file = e.target.files[0];
             if (!file) return;
+
+            const btn = container.querySelector('#btn-import');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = `<span class="spinner"></span> Importing...`;
+
+            // Allow UI to update
+            await new Promise(r => setTimeout(r, 50));
 
             try {
                 const text = await file.text();
@@ -198,7 +217,10 @@ export const ProjectPanel = {
             } catch (err) {
                 console.error(err);
                 Toast.show('Import failed: ' + err.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
             }
+            // Note: success case reloads, so no need to reset button there
         };
     }
 };

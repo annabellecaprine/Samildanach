@@ -27,6 +27,7 @@ export const ArchitectPanel = {
      */
     render: async (container, state) => {
         container.style.padding = '0';
+        container.innerHTML = `<div class="loading-container"><div class="spinner spinner-lg"></div><div class="text-muted">Loading Architect...</div></div>`;
 
         await FlowsDB.init();
         let flows = await FlowsDB.list();
