@@ -4,7 +4,7 @@
  */
 
 import { LLM, PROVIDER_PRESETS } from '../../core/llm.js';
-import { generateId } from '../../core/utils.js';
+import { generateId, Utils } from '../../core/utils.js';
 import { Modal } from '../../components/modal/index.js';
 import { Toast } from '../../components/toast/index.js';
 
