@@ -1,0 +1,83 @@
+/* Component: Tour */
+
+.tour-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    pointer-events: none;
+    /* Allow clicks to pass through wrapper */
+}
+
+/* The Highlight box */
+.tour-highlight {
+    position: absolute;
+    border-radius: 6px;
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75);
+    /* The backdrop */
+    border: 2px solid var(--accent-primary);
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    pointer-events: none;
+}
+
+/* The Popup Card */
+.tour-popup {
+    position: absolute;
+    width: 320px;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-subtle);
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    padding: 16px;
+    pointer-events: auto;
+    /* Re-enable clicks */
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    opacity: 1;
+    z-index: 10001;
+}
+
+.tour-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.tour-header strong {
+    font-size: 16px;
+    color: var(--text-primary);
+}
+
+.tour-body {
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+}
+
+.tour-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.tour-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Animations */
+@keyframes tour-pop {
+    from {
+        transform: scale(0.95);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.tour-popup {
+    animation: tour-pop 0.3s ease-out;
+}

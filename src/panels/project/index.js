@@ -11,6 +11,7 @@ import { Exporter } from '../../core/exporter.js';
 import { State } from '../../core/state.js';
 import { getAllCategories } from '../../core/categories.js';
 import { Toast } from '../../components/toast/index.js';
+import { Tour } from '../../components/tour/index.js';
 
 export const ProjectPanel = {
     id: 'project',
@@ -39,14 +40,17 @@ export const ProjectPanel = {
                 <div class="project-content">
                     
                     <!-- Header -->
-                    <div class="project-header">
-                        <div class="project-icon">📖</div>
-                        <input id="proj-title" type="text" value="${State.project.title}" 
-                            placeholder="Setting Title" class="project-title">
-                        <div class="project-author">
+                    <div class="project-header flex justify-between items-center">
+                        <div class="flex items-center gap-md flex-1">
+                            <div class="project-icon">📖</div>
+                            <input id="proj-title" type="text" value="${State.project.title}" 
+                                placeholder="Setting Title" class="project-title flex-1">
+                        </div>
+                        <div class="project-author" style="margin-right: 16px;">
                             <input id="proj-author" type="text" value="${State.project.author}" 
                                 placeholder="Author Name">
                         </div>
+                        <button id="btn-tour" class="btn btn-secondary btn-sm">Start Tour 🚩</button>
                     </div>
 
                     <!-- Stats Cards -->
@@ -119,6 +123,11 @@ export const ProjectPanel = {
         container.querySelectorAll('input, textarea').forEach(el => {
             el.oninput = save;
         });
+
+        // Tour Button
+        container.querySelector('#btn-tour').onclick = () => {
+            Tour.start('getting-started');
+        };
 
         // Export - includes State
         container.querySelector('#btn-export').onclick = async () => {
