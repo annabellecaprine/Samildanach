@@ -15,7 +15,8 @@ export const GrimoirePanel = {
     // Shared state across renders
     _state: {
         activeCategory: 'item',
-        selectedRuleId: null
+        selectedRuleId: null,
+        searchQuery: ''
     },
 
     render: async (container) => {
@@ -29,15 +30,26 @@ export const GrimoirePanel = {
         let activeCategory = GrimoirePanel._state.activeCategory || categories[0]?.id || 'item';
         let selectedRuleId = GrimoirePanel._state.selectedRuleId;
         let selectedRule = selectedRuleId ? rules.find(r => r.id === selectedRuleId) : null;
+        let searchQuery = GrimoirePanel._state.searchQuery || '';
         let editorInstance = null;
 
         async function renderPanel() {
-            // Refresh from DB to ensure we have latest
+            // Refresh from DB to ensure we have latest (in case of navigation)
             rules = await RulesDB.list();
             selectedRule = selectedRuleId ? rules.find(r => r.id === selectedRuleId) : null;
 
-            const catRules = rules.filter(r => r.type === activeCategory);
+            // Filter by category AND search query
             const cat = getRuleCategoryById(activeCategory);
+            let catRules = rules.filter(r => r.type === activeCategory);
+
+            if (searchQuery) {
+                const q = searchQuery.toLowerCase();
+                catRules = catRules.filter(r =>
+                    (r.data.name || '').toLowerCase().includes(q) ||
+                    (r.data.description || '').toLowerCase().includes(q) ||
+                    Object.values(r.data).some(v => typeof v === 'string' && v.toLowerCase().includes(q))
+                );
+            }
 
             container.innerHTML = `
                 <div class="grimoire-layout">
@@ -59,12 +71,20 @@ export const GrimoirePanel = {
                             `).join('')}
                         </div>
 
+                        <!-- Search -->
+                        <div style="padding: 0 8px 8px 8px;">
+                            <input type="text" id="grimoire-search" class="input input-sm" 
+                                   style="width: 100%;" 
+                                   placeholder="Search ${cat?.label || 'rules'}..." 
+                                   value="${searchQuery}">
+                        </div>
+
                         <!-- Rule List -->
                         <div class="rule-list">
                             ${catRules.length === 0 ? `
                                 <div class="empty-state">
-                                    <div class="empty-icon">${cat?.icon || '📖'}</div>
-                                    <div class="empty-text">No ${cat?.label || 'rules'} yet</div>
+                                    <div class="empty-icon">${searchQuery ? '🔍' : (cat?.icon || '📖')}</div>
+                                    <div class="empty-text">${searchQuery ? 'No matches' : `No ${cat?.label || 'rules'} yet`}</div>
                                 </div>
                             ` : catRules.map(r => `
                                 <div class="rule-item ${selectedRule?.id === r.id ? 'selected' : ''}" data-id="${r.id}">
@@ -131,11 +151,37 @@ export const GrimoirePanel = {
                     activeCategory = tab.dataset.cat;
                     selectedRuleId = null;
                     selectedRule = null;
+                    searchQuery = ''; // Clear search on category switch
                     GrimoirePanel._state.activeCategory = activeCategory;
                     GrimoirePanel._state.selectedRuleId = null;
+                    GrimoirePanel._state.searchQuery = '';
                     renderPanel();
                 };
             });
+
+            // Bind search input
+            const searchInput = container.querySelector('#grimoire-search');
+            if (searchInput) {
+                searchInput.oninput = (e) => {
+                    searchQuery = e.target.value;
+                    GrimoirePanel._state.searchQuery = searchQuery;
+
+                    // Allow UI to update without losing focus
+                    // Re-render only list part? For simplicity, we re-render full panel
+                    // but we need to restore focus.
+                    // Actually, re-rendering wipes the input, so we lose focus.
+                    // Let's implement smart re-render or debounce.
+                    // For now, debounce render and restore focus.
+
+                    renderPanel().then(() => {
+                        const newUrlInput = container.querySelector('#grimoire-search');
+                        if (newUrlInput) {
+                            newUrlInput.focus();
+                            newUrlInput.setSelectionRange(newUrlInput.value.length, newUrlInput.value.length);
+                        }
+                    });
+                };
+            }
 
             // Bind rule list
             container.querySelectorAll('.rule-item').forEach(item => {
@@ -156,6 +202,11 @@ export const GrimoirePanel = {
                 console.log('[Grimoire] Created rule:', newRule.id);
                 selectedRuleId = newRule.id;
                 GrimoirePanel._state.selectedRuleId = selectedRuleId;
+
+                // Clear search so we see the new item
+                searchQuery = '';
+                GrimoirePanel._state.searchQuery = '';
+
                 renderPanel();
             });
 
@@ -193,7 +244,6 @@ export const GrimoirePanel = {
                 await RulesDB.update(selectedRule);
                 console.log('[Grimoire] Saved rule:', selectedRule.id, data);
 
-                // Re-render to show updated name in list
                 renderPanel();
             });
 
