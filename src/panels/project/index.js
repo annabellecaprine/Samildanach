@@ -50,7 +50,7 @@ export const ProjectPanel = {
                             <input id="proj-author" type="text" value="${State.project.author}" 
                                 placeholder="Author Name">
                         </div>
-                        <button id="btn-tour" class="btn btn-secondary btn-sm">Start Tour 🚩</button>
+                        <button id="btn-tour" class="btn-icon" title="Start Tour" style="border-radius: 50%;">❓</button>
                     </div>
 
                     <!-- Stats Cards -->
