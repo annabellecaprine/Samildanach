@@ -6,6 +6,8 @@
 
 import { getCategoryById } from '../../../core/categories.js';
 import { RichTextEditor } from '../../../components/editor/index.js';
+import { Modal } from '../../../components/modal/index.js';
+import { Toast } from '../../../components/toast/index.js';
 
 export class EntryEditor {
     constructor(container, options = {}) {
@@ -123,9 +125,17 @@ export class EntryEditor {
         // Delete
         const deleteBtn = this.container.querySelector('#btn-delete-entry');
         if (deleteBtn) {
-            deleteBtn.onclick = () => {
-                if (confirm(`Delete "${this.item.data.name || 'this entry'}"?`)) {
-                    if (this.onDelete) this.onDelete(this.item);
+            deleteBtn.onclick = async () => {
+                const confirmed = await Modal.confirm('Delete Entry', `Are you sure you want to delete "${this.item.data.name || 'this entry'}"?`);
+                if (confirmed) {
+                    if (this.onDelete) {
+                        try {
+                            await this.onDelete(this.item);
+                            Toast.show('Entry deleted', 'success');
+                        } catch (e) {
+                            Toast.show('Failed to delete entry', 'error');
+                        }
+                    }
                 }
             };
         }

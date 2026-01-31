@@ -6,6 +6,8 @@
 import { RulesDB } from '../../core/rules-db.js';
 import { getAllRuleCategories, getRuleCategoryById } from '../../core/rules-categories.js';
 import { RichTextEditor } from '../../components/editor/index.js';
+import { Modal } from '../../components/modal/index.js';
+import { Toast } from '../../components/toast/index.js';
 
 export const GrimoirePanel = {
     id: 'grimoire',
@@ -213,10 +215,12 @@ export const GrimoirePanel = {
             // Delete button
             container.querySelector('#btn-delete-rule')?.addEventListener('click', async () => {
                 if (!selectedRule) return;
-                if (!confirm(`Delete "${selectedRule.data.name || 'this rule'}"?`)) return;
+                const confirmed = await Modal.confirm('Delete Rule', `Delete "${selectedRule.data.name || 'this rule'}"?`);
+                if (!confirmed) return;
 
                 await RulesDB.delete(selectedRule.id);
-                console.log('[Grimoire] Deleted rule:', selectedRule.id);
+                // console.log('[Grimoire] Deleted rule:', selectedRule.id);
+                Toast.show('Rule deleted', 'success');
                 selectedRuleId = null;
                 selectedRule = null;
                 GrimoirePanel._state.selectedRuleId = null;
@@ -242,7 +246,8 @@ export const GrimoirePanel = {
                 // Update rule object
                 selectedRule.data = data;
                 await RulesDB.update(selectedRule);
-                console.log('[Grimoire] Saved rule:', selectedRule.id, data);
+                // console.log('[Grimoire] Saved rule:', selectedRule.id, data);
+                Toast.show('Rule saved', 'success');
 
                 renderPanel();
             });

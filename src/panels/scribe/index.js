@@ -7,6 +7,8 @@ import { LLM } from '../../core/llm.js';
 import { VaultDB } from '../../core/vault.js';
 import { getAllCategories } from '../../core/categories.js';
 import { generateId } from '../../core/utils.js';
+import { Modal } from '../../components/modal/index.js';
+import { Toast } from '../../components/toast/index.js';
 
 const STORAGE_KEY = 'samildanach_scribe_state';
 
@@ -358,17 +360,19 @@ export const ScribePanel = {
         };
 
         // Clear chat
-        container.querySelector('#btn-clear').onclick = () => {
-            if (confirm('Clear all messages?')) {
+        container.querySelector('#btn-clear').onclick = async () => {
+            const confirmed = await Modal.confirm('Clear Chat', 'Clear all messages?');
+            if (confirmed) {
                 state.history = [];
                 saveState();
                 renderChat();
+                Toast.show('Chat cleared', 'success');
             }
         };
 
         // Save session
-        container.querySelector('#btn-save-session').onclick = () => {
-            const name = prompt('Session name:', `Session ${Object.keys(state.sessions).length + 1}`);
+        container.querySelector('#btn-save-session').onclick = async () => {
+            const name = await Modal.prompt('Session name:', `Session ${Object.keys(state.sessions).length + 1}`);
             if (!name) return;
 
             state.sessions[name] = {
@@ -382,6 +386,8 @@ export const ScribePanel = {
             // Refresh session select
             sessionSelect.innerHTML = '<option value="">-- Sessions --</option>' +
                 Object.keys(state.sessions).map(s => `<option value="${s}">${s}</option>`).join('');
+
+            Toast.show('Session saved', 'success');
         };
 
         // Load session

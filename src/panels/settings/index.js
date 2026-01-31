@@ -5,6 +5,8 @@
 
 import { LLM, PROVIDER_PRESETS } from '../../core/llm.js';
 import { generateId } from '../../core/utils.js';
+import { Modal } from '../../components/modal/index.js';
+import { Toast } from '../../components/toast/index.js';
 
 export const SettingsPanel = {
     id: 'settings',
@@ -210,10 +212,12 @@ export const SettingsPanel = {
                 openEditor(cfg);
             };
 
-            card.querySelector('.btn-delete').onclick = () => {
-                if (confirm('Delete this configuration?')) {
+            card.querySelector('.btn-delete').onclick = async () => {
+                const confirmed = await Modal.confirm('Delete Config', 'Delete this configuration?');
+                if (confirmed) {
                     LLM.deleteConfig(id);
                     SettingsPanel.render(container, state);
+                    Toast.show('Configuration deleted', 'success');
                 }
             };
         });

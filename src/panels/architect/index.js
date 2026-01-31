@@ -7,6 +7,8 @@ import { NodeCanvas } from './components/canvas.js';
 import { NodePicker } from './components/NodePicker.js';
 import { FlowsDB } from '../../core/flows-db.js';
 import { Utils } from '../../core/utils.js';
+import { Modal } from '../../components/modal/index.js';
+import { Toast } from '../../components/toast/index.js';
 
 export const ArchitectPanel = {
     id: 'architect',
@@ -113,7 +115,7 @@ export const ArchitectPanel = {
 
             // New Flow
             container.querySelector('#btn-new-flow').onclick = async () => {
-                const name = prompt('Flow name:', 'New Flow');
+                const name = await Modal.prompt('Flow name:', 'New Flow');
                 if (!name) return;
 
                 const newFlow = await FlowsDB.create(name);
@@ -125,7 +127,7 @@ export const ArchitectPanel = {
             // Rename Flow
             container.querySelector('#btn-rename-flow').onclick = async () => {
                 if (!activeFlow) return;
-                const name = prompt('Rename flow:', activeFlow.name);
+                const name = await Modal.prompt('Rename flow:', activeFlow.name);
                 if (!name) return;
 
                 activeFlow.name = name;
@@ -137,16 +139,18 @@ export const ArchitectPanel = {
             container.querySelector('#btn-delete-flow').onclick = async () => {
                 if (!activeFlow) return;
                 if (flows.length <= 1) {
-                    alert('Cannot delete the last flow.');
+                    Toast.show('Cannot delete the last flow.', 'warning');
                     return;
                 }
-                if (!confirm(`Delete "${activeFlow.name}"?`)) return;
+                const confirmed = await Modal.confirm('Delete Flow', `Delete "${activeFlow.name}"?`);
+                if (!confirmed) return;
 
                 await FlowsDB.delete(activeFlow.id);
                 flows = await FlowsDB.list();
                 activeFlowId = flows[0]?.id;
                 ArchitectPanel._state.activeFlowId = activeFlowId;
                 render();
+                Toast.show('Flow deleted', 'success');
             };
 
             // Node Picker
@@ -178,12 +182,14 @@ export const ArchitectPanel = {
             };
 
             container.querySelector('#btn-clear-all').onclick = async () => {
-                if (confirm('Clear all nodes in this flow?')) {
+                const confirmed = await Modal.confirm('Clear Nodes', 'Clear all nodes in this flow?');
+                if (confirmed) {
                     canvas.nodes = [];
                     canvas.links = [];
                     nodeLayer.innerHTML = '';
                     svgLayer.innerHTML = '';
                     canvas.notifyChange();
+                    Toast.show('Flow cleared', 'success');
                 }
             };
         }

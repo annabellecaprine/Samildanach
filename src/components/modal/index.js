@@ -120,4 +120,40 @@ export class Modal {
             modal.show();
         });
     }
+
+    /**
+     * Static helper to show a simple prompt dialog
+     * @param {string} title
+     * @param {string} defaultValue
+     * @returns {Promise<string|null>}
+     */
+    static prompt(title, defaultValue = '') {
+        return new Promise((resolve) => {
+            const content = document.createElement('div');
+            content.innerHTML = `
+                <input type="text" class="input" style="width:100%" value="${defaultValue}">
+            `;
+            const input = content.querySelector('input');
+
+            const modal = new Modal({
+                title,
+                content,
+                actions: [
+                    { label: 'Cancel', className: 'btn btn-secondary', onClick: () => { modal.close(); resolve(null); } },
+                    { label: 'OK', className: 'btn btn-primary', onClick: () => { modal.close(); resolve(input.value); } }
+                ]
+            });
+            modal.show();
+            // Focus input
+            setTimeout(() => input.focus(), 50);
+
+            // Enter key support
+            input.onkeydown = (e) => {
+                if (e.key === 'Enter') {
+                    modal.close();
+                    resolve(input.value);
+                }
+            };
+        });
+    }
 }

@@ -5,6 +5,7 @@
 
 import { Dice } from '../../core/dice.js';
 import { Simulator } from '../../core/simulator.js';
+import { Toast } from '../../components/toast/index.js';
 
 export const LaboratoryPanel = {
     id: 'laboratory',
@@ -134,7 +135,7 @@ export const LaboratoryPanel = {
 
                 if (result.error) {
                     simResults.style.display = 'none';
-                    alert(result.error);
+                    Toast.show(result.error, 'error');
                     return;
                 }
 
@@ -176,7 +177,7 @@ export const LaboratoryPanel = {
 
             if (result.error) {
                 cmpResults.style.display = 'none';
-                alert(result.error);
+                Toast.show(result.error, 'error');
                 return;
             }
 

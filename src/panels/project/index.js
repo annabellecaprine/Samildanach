@@ -10,6 +10,7 @@ import { FlowsDB } from '../../core/flows-db.js';
 import { Exporter } from '../../core/exporter.js';
 import { State } from '../../core/state.js';
 import { getAllCategories } from '../../core/categories.js';
+import { Toast } from '../../components/toast/index.js';
 
 export const ProjectPanel = {
     id: 'project',
@@ -125,8 +126,9 @@ export const ProjectPanel = {
                 const projectName = (State.project.title || 'samildanach').toLowerCase().replace(/\s+/g, '-');
                 const json = await Exporter.toJSON();
                 Exporter.download(JSON.stringify(json, null, 2), `${projectName}.json`, 'application/json');
+                Toast.show('Project exported successfully', 'success');
             } catch (e) {
-                alert('Export failed: ' + e.message);
+                Toast.show('Export failed: ' + e.message, 'error');
             }
         };
 
@@ -187,11 +189,12 @@ export const ProjectPanel = {
                     counts.flows = importData.flows.length;
                 }
 
-                alert(`Imported:\n- ${counts.entries} Library Entries\n- ${counts.rules} Rules\n- ${counts.flows} Flows`);
-                location.reload();
+                // alert(`Imported:\n- ${counts.entries} Library Entries\n- ${counts.rules} Rules\n- ${counts.flows} Flows`);
+                Toast.show(`Imported: ${counts.entries} Items, ${counts.rules} Rules, ${counts.flows} Flows`, 'success');
+                setTimeout(() => location.reload(), 1500);
             } catch (err) {
                 console.error(err);
-                alert('Import failed: ' + err.message);
+                Toast.show('Import failed: ' + err.message, 'error');
             }
         };
     }

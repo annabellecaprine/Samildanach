@@ -5,6 +5,7 @@
 
 import { UI } from './core/ui.js';
 import { State } from './core/state.js';
+import { Toast } from './components/toast/index.js';
 
 // Import Panels
 import { ProjectPanel } from './panels/project/index.js';
