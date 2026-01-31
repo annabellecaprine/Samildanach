@@ -17,6 +17,12 @@
     gap: 6px;
 }
 
+.btn-sm {
+    padding: 4px 10px;
+    font-size: 11px;
+    gap: 4px;
+}
+
 .btn-primary {
     background: var(--accent-primary);
     color: var(--bg-app);
@@ -396,4 +402,41 @@
     color: var(--text-muted);
     gap: 16px;
     height: 100%;
+}
+
+/* --- Utilities --- */
+.hidden {
+    display: none !important;
+}
+
+.block {
+    display: block;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.mt-sm {
+    margin-top: 4px;
+}
+
+.mt-md {
+    margin-top: 8px;
+}
+
+.mt-lg {
+    margin-top: 16px;
+}
+
+.mr-sm {
+    margin-right: 8px;
+}
+
+.ml-auto {
+    margin-left: auto;
+}
+
+.text-error {
+    color: var(--status-error);
 }

@@ -29,7 +29,7 @@ export const LaboratoryPanel = {
                             <input id="lab-expr" type="text" placeholder="e.g. 2d6+3" class="input flex-1" value="2d6">
                             <button id="lab-roll" class="btn btn-primary">Roll</button>
                         </div>
-                        <div id="lab-stats" class="text-muted text-sm" style="margin-top:8px;"></div>
+                        <div id="lab-stats" class="text-muted text-sm mt-md"></div>
                         <div id="lab-result" class="dice-result">
                             Enter an expression and click Roll.
                         </div>
@@ -50,7 +50,7 @@ export const LaboratoryPanel = {
                             </div>
                         </div>
                         
-                        <div id="sim-results" class="simulation-results" style="display:none;">
+                        <div id="sim-results" class="simulation-results hidden">
                             <div class="stats-row">
                                 <div class="stat-box"><span id="stat-min">-</span><small>Min</small></div>
                                 <div class="stat-box"><span id="stat-max">-</span><small>Max</small></div>
@@ -72,7 +72,7 @@ export const LaboratoryPanel = {
                             <input id="cmp-expr2" type="text" placeholder="Expression 2" class="input" value="2d10">
                             <button id="cmp-run" class="btn btn-secondary">Compare</button>
                         </div>
-                        <div id="cmp-results" class="compare-results" style="display:none;"></div>
+                        <div id="cmp-results" class="compare-results hidden"></div>
                     </div>
                 </div>
             </div>
@@ -100,7 +100,7 @@ export const LaboratoryPanel = {
 
             const result = Dice.roll(expr);
             if (result.error) {
-                resultEl.innerHTML = `<span style="color:var(--status-error);">${Utils.escapeHtml(result.error)}</span>`;
+                resultEl.innerHTML = `<span class="text-error">${Utils.escapeHtml(result.error)}</span>`;
             } else {
                 resultEl.innerHTML = `
                     <div><strong>Rolls:</strong> [${result.rolls.join(', ')}]</div>

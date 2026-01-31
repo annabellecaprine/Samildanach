@@ -129,7 +129,7 @@ export class NodePicker {
                     const btn = document.createElement('button');
                     btn.className = 'btn btn-secondary';
                     btn.style.cssText = 'justify-content:flex-start; padding:8px 12px; text-align:left;';
-                    btn.innerHTML = `<span style="margin-right:8px;">${cat?.icon || '📄'}</span> ${Utils.escapeHtml(entry.data.name || 'Untitled')}`;
+                    btn.innerHTML = `<span class="mr-sm">${cat?.icon || '📄'}</span> ${Utils.escapeHtml(entry.data.name || 'Untitled')}`;
                     btn.onclick = () => {
                         if (this.onSelect) {
                             this.onSelect({
@@ -166,7 +166,7 @@ export class NodePicker {
                     const btn = document.createElement('button');
                     btn.className = 'btn btn-secondary';
                     btn.style.cssText = 'justify-content:flex-start; padding:8px 12px; text-align:left;';
-                    btn.innerHTML = `<span style="margin-right:8px;">${cat?.icon || '📖'}</span> ${Utils.escapeHtml(rule.data.name || 'Untitled')}`;
+                    btn.innerHTML = `<span class="mr-sm">${cat?.icon || '📖'}</span> ${Utils.escapeHtml(rule.data.name || 'Untitled')}`;
                     btn.onclick = () => {
                         if (this.onSelect) {
                             this.onSelect({
@@ -202,7 +202,7 @@ export class NodePicker {
                     const btn = document.createElement('button');
                     btn.className = 'btn btn-secondary';
                     btn.style.cssText = 'justify-content:flex-start; padding:8px 12px; text-align:left;';
-                    btn.innerHTML = `<span style="margin-right:8px;">📦</span> ${Utils.escapeHtml(flow.name)}`;
+                    btn.innerHTML = `<span class="mr-sm">📦</span> ${Utils.escapeHtml(flow.name)}`;
                     btn.onclick = () => {
                         if (this.onSelect) {
                             this.onSelect({
@@ -229,7 +229,7 @@ export class NodePicker {
                     const btn = document.createElement('button');
                     btn.className = 'btn btn-secondary';
                     btn.style.cssText = 'justify-content:flex-start; padding:8px 12px;';
-                    btn.innerHTML = `<span style="margin-right:8px;">${type.icon}</span> ${template.title}`;
+                    btn.innerHTML = `<span class="mr-sm">${type.icon}</span> ${template.title}`;
                     btn.onclick = () => {
                         if (this.onSelect) {
                             this.onSelect({

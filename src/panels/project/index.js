@@ -88,7 +88,7 @@ export const ProjectPanel = {
                                 placeholder="D&D 5e, Pathfinder 2e, Fate Core..." class="input">
                         </div>
 
-                        <div class="detail-field" style="margin-top: 16px;">
+                        <div class="detail-field mt-lg">
                             <label class="label">Description</label>
                             <textarea id="proj-description" rows="4" 
                                 placeholder="Describe your setting..." class="textarea">${Utils.escapeHtml(State.project.description)}</textarea>
@@ -100,7 +100,7 @@ export const ProjectPanel = {
                         <button id="btn-export" class="action-btn">📤 Export Setting</button>
                         <button id="btn-import" class="action-btn">📥 Import Setting</button>
                     </div>
-                    <input type="file" id="import-file" accept=".json" style="display:none;">
+                    <input type="file" id="import-file" accept=".json" class="hidden">
                 </div>
             </div>
         `;

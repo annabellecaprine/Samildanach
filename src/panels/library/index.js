@@ -38,7 +38,7 @@ export const LibraryPanel = {
                 <div id="lib-sidebar" class="library-sidebar"></div>
                 <div id="lib-main" class="library-main">
                     <div id="lib-editor-area"></div>
-                    <div id="lib-relationships-area" class="relationships-section" style="display:none;"></div>
+                    <div id="lib-relationships-area" class="relationships-section hidden"></div>
                 </div>
             </div>
         `;

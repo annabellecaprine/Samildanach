@@ -37,7 +37,7 @@ export class RelationshipManager {
         this.container.innerHTML = `
             <div class="relationships-header">
                 <div class="label">Relationships</div>
-                <button id="add-relationship-btn" class="btn btn-primary" style="padding:4px 10px; font-size:11px;">+ Add</button>
+                <button id="add-relationship-btn" class="btn btn-primary btn-sm">+ Add</button>
             </div>
             <div id="relationships-list" class="relationships-list"></div>
             <div id="back-references" class="back-references"></div>
@@ -124,11 +124,11 @@ export class RelationshipManager {
         content.innerHTML = `
             <div>
                 <label class="label">Type</label>
-                <select id="rel-type-select" class="input" style="width:100%; margin-top:4px;"></select>
+                <select id="rel-type-select" class="input w-full mt-sm"></select>
             </div>
             <div>
                 <label class="label">Target Entry</label>
-                <select id="rel-target-select" class="input" style="width:100%; margin-top:4px;"></select>
+                <select id="rel-target-select" class="input w-full mt-sm"></select>
             </div>
         `;
 

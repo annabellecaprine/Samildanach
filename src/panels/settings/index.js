@@ -53,7 +53,7 @@ export const SettingsPanel = {
                     </div>
 
                     <!-- Editor Modal (hidden) -->
-                    <div id="config-editor" class="config-editor" style="display:none;">
+                    <div id="config-editor" class="config-editor hidden">
                         <div class="editor-content">
                             <h3 class="editor-title">Configuration</h3>
                             
@@ -79,7 +79,7 @@ export const SettingsPanel = {
                                 <input type="password" id="cfg-apikey" class="input" placeholder="sk-...">
                             </div>
 
-                            <div class="field-group" id="field-baseurl" style="display:none;">
+                            <div class="field-group hidden" id="field-baseurl">
                                 <label class="field-label">Base URL</label>
                                 <input type="text" id="cfg-baseurl" class="input" placeholder="https://api.example.com/v1">
                             </div>
