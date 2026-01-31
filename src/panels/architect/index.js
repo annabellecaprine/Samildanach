@@ -3,19 +3,14 @@
  * The Visual Rules Editor.
  */
 
-// Load styles dynamically
-const link = document.createElement('link');
-link.rel = 'stylesheet';
-link.href = './panels/architect/architect.css'; // Path relative to index.html
-document.head.appendChild(link);
-
 import { NodeCanvas } from './components/canvas.js';
+import { NodePicker } from './components/NodePicker.js';
 import { Utils } from '../../core/utils.js';
 
 export const ArchitectPanel = {
     id: 'architect',
     label: 'Architect',
-    icon: '📐', // Ruler
+    icon: '📐',
 
     /**
      * Render the panel content
@@ -23,28 +18,25 @@ export const ArchitectPanel = {
      * @param {Object} state 
      */
     render: (container, state) => {
-        container.style.padding = '0'; // Full bleed for canvas
+        container.style.padding = '0';
 
-        // Scaffolding
         container.innerHTML = `
             <div class="architect-workspace" id="arch-workspace">
                 <div class="connection-layer" id="arch-connections">
                     <svg width="100%" height="100%" id="arch-svg"></svg>
                 </div>
-                <div class="node-layer" id="arch-nodes">
-                    <!-- Nodes injected here -->
-                </div>
+                <div class="node-layer" id="arch-nodes"></div>
                 
                 <div class="architect-toolbar">
-                    <button class="btn-primary" id="btn-add-node">+ Add Logic</button>
-                    <button class="btn-secondary" id="btn-reset-view">Center</button>
-                    <div style="width:1px; background:var(--border-subtle); margin:0 4px;"></div>
-                    <span style="font-size:12px; color:var(--text-muted); align-self:center;">Pan: Middle Click / Space+Drag</span>
+                    <button class="btn btn-primary" id="btn-add-node">+ Add Node</button>
+                    <button class="btn btn-secondary" id="btn-reset-view">Center</button>
+                    <button class="btn btn-secondary" id="btn-clear-all">Clear</button>
+                    <div class="toolbar-divider"></div>
+                    <span class="toolbar-hint">Pan: Middle Click / Alt+Drag</span>
                 </div>
             </div>
         `;
 
-        // Initialize Canvas Logic
         const workspace = container.querySelector('#arch-workspace');
         const nodeLayer = container.querySelector('#arch-nodes');
         const svgLayer = container.querySelector('#arch-svg');
@@ -52,31 +44,48 @@ export const ArchitectPanel = {
         const canvas = new NodeCanvas(workspace, nodeLayer, svgLayer);
         canvas.init();
 
-        // Bind Toolbar
+        // Node Picker
+        const nodePicker = new NodePicker({
+            onSelect: (nodeData) => {
+                canvas.addNode({
+                    id: Utils.generateId('node'),
+                    x: 100 + (Math.random() * 100),
+                    y: 100 + (Math.random() * 100),
+                    type: nodeData.type,
+                    title: nodeData.title,
+                    inputs: nodeData.inputs || [],
+                    outputs: nodeData.outputs || [],
+                    entryId: nodeData.entryId || null,
+                    entryType: nodeData.entryType || null
+                });
+            }
+        });
+
         container.querySelector('#btn-add-node').onclick = () => {
-            canvas.addNode({
-                id: Utils.generateId('node'),
-                x: 100 + (Math.random() * 50),
-                y: 100 + (Math.random() * 50),
-                title: 'Logic Block',
-                inputs: ['in'],
-                outputs: ['out', 'true', 'false']
-            });
+            nodePicker.show();
         };
 
         container.querySelector('#btn-reset-view').onclick = () => {
             canvas.resetView();
         };
 
-        // Persistence Logic
+        container.querySelector('#btn-clear-all').onclick = () => {
+            if (confirm('Clear all nodes?')) {
+                canvas.nodes = [];
+                canvas.links = [];
+                nodeLayer.innerHTML = '';
+                svgLayer.innerHTML = '';
+                canvas.notifyChange();
+            }
+        };
+
+        // Persistence
         const STORAGE_KEY = 'samildanach_architect_layout';
 
-        // Save Handler
         canvas.onDataChange = (data) => {
             localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
         };
 
-        // Load Handler
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
             try {
@@ -84,18 +93,35 @@ export const ArchitectPanel = {
                 canvas.importData(data);
             } catch (e) {
                 console.error("Failed to load architect layout:", e);
-                // Fallback to demo
                 addDemoNodes();
             }
         } else {
             addDemoNodes();
         }
 
-        // Helper to add demo data
         function addDemoNodes() {
             if (canvas.nodes.length === 0) {
-                canvas.addNode({ id: 'start', x: 50, y: 50, title: 'Event: Start', outputs: ['next'] });
-                canvas.addNode({ id: 'd20', x: 300, y: 100, title: 'Action: Roll D20', inputs: ['prev'], outputs: ['next', 'value'] });
+                canvas.addNode({
+                    id: 'start', x: 50, y: 50,
+                    type: 'event',
+                    title: 'On Attack',
+                    inputs: ['attacker', 'target'],
+                    outputs: ['next']
+                });
+                canvas.addNode({
+                    id: 'd20', x: 300, y: 100,
+                    type: 'action',
+                    title: 'Roll Dice',
+                    inputs: ['expression'],
+                    outputs: ['result', 'next']
+                });
+                canvas.addNode({
+                    id: 'check', x: 550, y: 50,
+                    type: 'condition',
+                    title: 'Compare Roll',
+                    inputs: ['roll', 'dc'],
+                    outputs: ['success', 'failure']
+                });
             }
         }
     }

@@ -118,7 +118,7 @@ export class NodeCanvas {
 
     renderNodeElement(data) {
         const el = document.createElement('div');
-        el.className = 'node';
+        el.className = 'node' + (data.type ? ` ${data.type}` : '');
         el.id = data.id;
         el.style.left = data.x + 'px';
         el.style.top = data.y + 'px';
