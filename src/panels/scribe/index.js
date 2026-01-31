@@ -261,6 +261,20 @@ export const ScribePanel = {
                                 }
                             });
                         }
+
+                        // Add relationships
+                        if (entry.data.relationships && entry.data.relationships.length > 0) {
+                            prompt += `\n  Relationships:`;
+                            entry.data.relationships.forEach(rel => {
+                                const targetEntry = entries.find(e => e.id === rel.targetId);
+                                const targetName = targetEntry?.data.name || '(Unknown)';
+                                const relLabel = rel.type || 'related to';
+                                prompt += `\n    - ${relLabel}: ${targetName}`;
+                                if (rel.notes) {
+                                    prompt += ` (${rel.notes})`;
+                                }
+                            });
+                        }
                     });
                     prompt += `\n[END CONTEXT]`;
                 }
