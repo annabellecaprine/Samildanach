@@ -5,6 +5,9 @@
  */
 
 import { VaultDB } from '../../core/vault.js';
+import { RulesDB } from '../../core/rules-db.js';
+import { FlowsDB } from '../../core/flows-db.js';
+import { Exporter } from '../../core/exporter.js';
 import { State } from '../../core/state.js';
 import { getAllCategories } from '../../core/categories.js';
 
@@ -118,19 +121,13 @@ export const ProjectPanel = {
 
         // Export - includes State
         container.querySelector('#btn-export').onclick = async () => {
-            const exportData = {
-                meta: State.project,
-                entries: allItems,
-                exportedAt: new Date().toISOString(),
-                version: '1.0'
-            };
-            const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${State.project.title.replace(/[^a-z0-9]/gi, '_')}_setting.json`;
-            a.click();
-            URL.revokeObjectURL(url);
+            try {
+                const projectName = (State.project.title || 'samildanach').toLowerCase().replace(/\s+/g, '-');
+                const json = await Exporter.toJSON();
+                Exporter.download(JSON.stringify(json, null, 2), `${projectName}.json`, 'application/json');
+            } catch (e) {
+                alert('Export failed: ' + e.message);
+            }
         };
 
         // Import - updates State
@@ -145,19 +142,55 @@ export const ProjectPanel = {
                 const text = await file.text();
                 const importData = JSON.parse(text);
 
+                let counts = { entries: 0, rules: 0, flows: 0 };
+
                 if (importData.meta) {
                     State.updateProject(importData.meta);
                 }
 
+                // Import Library Entries
                 if (importData.entries && Array.isArray(importData.entries)) {
+                    await VaultDB.init();
                     for (const entry of importData.entries) {
+                        // Check if exists? schema might differ. 
+                        // VaultDB.addItem generates ID. To preserve ID we might need a lower level put, 
+                        // but VaultDB doesn't expose it easily. 
+                        // For now we re-add.
                         await VaultDB.addItem(entry.type, entry.data);
                     }
+                    counts.entries = importData.entries.length;
                 }
 
-                alert(`Imported ${importData.entries?.length || 0} entries!`);
+                // Import Grimoire Rules
+                if (importData.rules && Array.isArray(importData.rules)) {
+                    await RulesDB.init();
+                    for (const rule of importData.rules) {
+                        // We use the internal 'add' but logic inside might duplicate.
+                        // Ideally we should check existence or use put with ID.
+                        // For this implementation effectively merging.
+                        await RulesDB.add(rule.type, rule.data);
+                    }
+                    counts.rules = importData.rules.length;
+                }
+
+                // Import Architect Flows
+                if (importData.flows && Array.isArray(importData.flows)) {
+                    await FlowsDB.init();
+                    for (const flow of importData.flows) {
+                        // Force ID preservation for flows is important for linking
+                        // But FlowsDB.create generates ID. 
+                        // We need a way to restore exact ID.
+                        // Use raw DB access or update method if it allows new items.
+                        // FlowsDB.update uses 'put' which can insert if key matches.
+                        await FlowsDB.update(flow);
+                    }
+                    counts.flows = importData.flows.length;
+                }
+
+                alert(`Imported:\n- ${counts.entries} Library Entries\n- ${counts.rules} Rules\n- ${counts.flows} Flows`);
                 location.reload();
             } catch (err) {
+                console.error(err);
                 alert('Import failed: ' + err.message);
             }
         };

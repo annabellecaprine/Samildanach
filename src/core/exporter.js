@@ -4,9 +4,13 @@
  * @module Core/Exporter
  */
 
+import { Utils } from './utils.js';
 import { VaultDB } from './vault.js';
+import { RulesDB } from './rules-db.js';
+import { FlowsDB } from './flows-db.js';
 import { State } from './state.js';
 import { getCategoryById, getAllCategories } from './categories.js';
+import { getRuleCategoryById, getAllRuleCategories } from './rules-categories.js';
 import { getRelationshipById } from './relationships.js';
 
 export const Exporter = {
@@ -18,11 +22,19 @@ export const Exporter = {
         await VaultDB.init();
         const entries = await VaultDB.list();
 
+        await RulesDB.init();
+        const rules = await RulesDB.list();
+
+        await FlowsDB.init();
+        const flows = await FlowsDB.list();
+
         return {
             meta: { ...State.project },
             entries: entries,
+            rules: rules,
+            flows: flows,
             exportedAt: new Date().toISOString(),
-            version: '1.0',
+            version: '2.0',
             format: 'samildanach-json'
         };
     },
@@ -88,6 +100,41 @@ export const Exporter = {
                 }
 
                 md += `---\n\n`;
+            }
+        }
+
+        // --- Grimoire Section ---
+        await RulesDB.init();
+        const rules = await RulesDB.list();
+        if (rules.length > 0) {
+            md += `# Grimoire \n\n`;
+
+            const ruleCats = getAllRuleCategories();
+            for (const cat of ruleCats) {
+                const catRules = rules.filter(r => r.type === cat.id);
+                if (catRules.length === 0) continue;
+
+                md += `## ${cat.icon} ${cat.label}\n\n`;
+
+                for (const rule of catRules) {
+                    md += `### ${rule.data.name || 'Untitled'}\n\n`;
+
+                    // Fields
+                    for (const field of cat.fields) {
+                        const value = rule.data[field.key];
+                        if (value) {
+                            md += `**${field.label}:** ${value}\n\n`;
+                        }
+                    }
+
+                    // Description
+                    if (rule.data.description) {
+                        const plainText = this._stripHtml(rule.data.description);
+                        md += `${plainText}\n\n`;
+                    }
+
+                    md += `---\n\n`;
+                }
             }
         }
 
