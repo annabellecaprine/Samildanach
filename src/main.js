@@ -15,6 +15,7 @@ import { GraphPanel } from './panels/graph/index.js';
 import { ExportPanel } from './panels/export/index.js';
 import { ScribePanel } from './panels/scribe/index.js';
 import { SettingsPanel } from './panels/settings/index.js';
+import { GrimoirePanel } from './panels/grimoire/index.js';
 
 async function init() {
     console.log(`%c Samildánach v${State.project.version} `, 'background: #222; color: #bada55');
@@ -28,6 +29,7 @@ async function init() {
     UI.registerPanel(ExportPanel.id, ExportPanel);
     UI.registerPanel(ScribePanel.id, ScribePanel);
     UI.registerPanel(SettingsPanel.id, SettingsPanel);
+    UI.registerPanel(GrimoirePanel.id, GrimoirePanel);
 
     // Initialize UI (will restore saved panel or fallback to default)
     UI.init();

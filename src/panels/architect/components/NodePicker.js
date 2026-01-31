@@ -6,7 +6,9 @@
 
 import { Modal } from '../../../components/modal/index.js';
 import { VaultDB } from '../../../core/vault.js';
+import { RulesDB } from '../../../core/rules-db.js';
 import { getCategoryById, getAllCategories } from '../../../core/categories.js';
+import { getRuleCategoryById, getAllRuleCategories } from '../../../core/rules-categories.js';
 
 // Node type definitions
 export const NODE_TYPES = {
@@ -51,11 +53,19 @@ export const NODE_TYPES = {
     },
     reference: {
         id: 'reference',
-        label: 'Reference',
+        label: 'Library',
         icon: '📚',
         color: '#c084fc',
-        description: 'Link to Library entries (items, abilities, characters)',
+        description: 'Link to Library entries (lore, characters, locations)',
         templates: [] // Populated dynamically from VaultDB
+    },
+    rules: {
+        id: 'rules',
+        label: 'Rules',
+        icon: '📖',
+        color: '#f59e0b',
+        description: 'Link to Grimoire entries (items, spells, abilities)',
+        templates: [] // Populated dynamically from RulesDB
     }
 };
 
@@ -109,7 +119,7 @@ export class NodePicker {
                     const btn = document.createElement('button');
                     btn.className = 'btn btn-secondary';
                     btn.style.cssText = 'justify-content:flex-start; padding:8px 12px; text-align:left;';
-                    btn.innerHTML = `<span style="margin-right:8px;">${cat.icon}</span> ${entry.data.name || 'Untitled'}`;
+                    btn.innerHTML = `<span style="margin-right:8px;">${cat?.icon || '📄'}</span> ${entry.data.name || 'Untitled'}`;
                     btn.onclick = () => {
                         if (this.onSelect) {
                             this.onSelect({
@@ -119,6 +129,43 @@ export class NodePicker {
                                 entryType: entry.type,
                                 inputs: ['in'],
                                 outputs: ['out', 'data']
+                            });
+                        }
+                        modal.close();
+                    };
+                    grid.appendChild(btn);
+                });
+
+                panels.appendChild(grid);
+            } else if (typeId === 'rules') {
+                // Load Grimoire rules
+                await RulesDB.init();
+                const rules = await RulesDB.list();
+
+                if (rules.length === 0) {
+                    panels.innerHTML = '<div class="text-muted">No Grimoire entries. Create rules in the Grimoire first.</div>';
+                    return;
+                }
+
+                const grid = document.createElement('div');
+                grid.className = 'grid-2';
+                grid.style.gap = '8px';
+
+                rules.forEach(rule => {
+                    const cat = getRuleCategoryById(rule.type);
+                    const btn = document.createElement('button');
+                    btn.className = 'btn btn-secondary';
+                    btn.style.cssText = 'justify-content:flex-start; padding:8px 12px; text-align:left;';
+                    btn.innerHTML = `<span style="margin-right:8px;">${cat?.icon || '📖'}</span> ${rule.data.name || 'Untitled'}`;
+                    btn.onclick = () => {
+                        if (this.onSelect) {
+                            this.onSelect({
+                                type: 'rules',
+                                title: `📖 ${rule.data.name || 'Untitled'}`,
+                                ruleId: rule.id,
+                                ruleType: rule.type,
+                                inputs: ['in'],
+                                outputs: ['out', 'effect']
                             });
                         }
                         modal.close();
