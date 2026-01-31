@@ -1,0 +1,131 @@
+/* 
+   Layer 5: Panels - Export
+   Export formats & download UI
+*/
+
+.export-layout {
+    height: 100%;
+    overflow-y: auto;
+    background: var(--bg-app);
+}
+
+.export-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.export-title {
+    font-size: 24px;
+    margin-bottom: 8px;
+    color: var(--accent-primary);
+}
+
+.export-description {
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+}
+
+.export-section {
+    background: var(--bg-surface);
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border-subtle);
+    margin-bottom: 24px;
+}
+
+/* Format Grid */
+.format-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+}
+
+.format-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 16px;
+    background: var(--bg-app);
+    border: 2px solid var(--border-subtle);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.format-btn:hover {
+    border-color: var(--accent-primary);
+    background: var(--bg-surface);
+}
+
+.format-btn.active {
+    border-color: var(--accent-primary);
+    background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), transparent);
+}
+
+.format-icon {
+    font-size: 32px;
+    margin-bottom: 8px;
+}
+
+.format-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.format-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+}
+
+/* Preview */
+.export-preview {
+    background: var(--bg-app);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    padding: 16px;
+    max-height: 400px;
+    overflow: auto;
+}
+
+.preview-loading {
+    color: var(--text-muted);
+    text-align: center;
+    padding: 40px;
+}
+
+.preview-code {
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 12px;
+    line-height: 1.4;
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+.preview-note {
+    background: rgba(124, 58, 237, 0.1);
+    border-left: 3px solid var(--accent-primary);
+    padding: 12px;
+    margin-bottom: 12px;
+    color: var(--text-secondary);
+}
+
+.preview-error {
+    color: var(--status-error);
+    padding: 20px;
+}
+
+/* Actions */
+.export-actions {
+    display: flex;
+    justify-content: center;
+    padding: 12px 0;
+}
+
+.btn-lg {
+    padding: 12px 48px;
+    font-size: 16px;
+}

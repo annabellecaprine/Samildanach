@@ -14,42 +14,58 @@ A browser-based tool for tabletop RPG and board game creators to design settings
 - **🔗 Wiki-Linking**: Connect entries with `[[Entry Name]]` syntax
 - **🕸️ World Graph**: Visualize relationships as an interactive mind-map
 - **🏠 Project Panel**: Home page with stats and export/import
-- **🧪 Laboratory**: Test dice expressions and mechanics
-- **📐 Architect**: Visual node-based editor (prototype)
+- **🧪 Laboratory**: Test dice expressions, run probability simulations
+- **📐 Architect**: Visual node-based rules editor
+- **📤 Export**: JSON, Markdown, HTML, PDF exports
 
 ## 📦 Installation
 
 ```bash
-# Clone the repository
 git clone https://github.com/annabellecaprine/Samildanach.git
 cd Samildanach
-
-# Install dependencies
 npm install
-
-# Run development server
 npm run dev
 ```
 
-## 🔧 Building for Production
+## 🔧 Build Commands
 
-```bash
-# Build to /docs folder for GitHub Pages
-npm run build
-
-# Preview the production build
-npm run preview
-```
+| Command | Description |
+|:---|:---|
+| `npm run dev` | Start development server |
+| `npm run build` | Build to /docs for GitHub Pages |
+| `npm run preview` | Preview production build |
+| `npm run tauri:dev` | Run desktop app in dev mode |
+| `npm run tauri:build` | Build desktop .exe/.dmg |
+| `npm run cap:sync` | Sync web assets to Android |
+| `npm run cap:android` | Open Android project in Android Studio |
 
 ## 🌐 GitHub Pages Deployment
 
-1. Build the project: `npm run build`
+1. `npm run build`
 2. Commit the `docs/` folder
 3. Push to GitHub
-4. Go to **Settings → Pages**
-5. Set source to **Deploy from a branch**
-6. Select **main** branch and **/docs** folder
-7. Save
+4. Settings → Pages → Deploy from `/docs`
+
+## 🖥️ Desktop App (Tauri)
+
+Requires [Rust toolchain](https://www.rust-lang.org/tools/install).
+
+```bash
+npm run tauri:build
+```
+
+Outputs to: `src-tauri/target/release/`
+
+## 📱 Android App (Capacitor)
+
+Requires [Android Studio](https://developer.android.com/studio).
+
+```bash
+npm run cap:sync
+npm run cap:android
+```
+
+Build APK from Android Studio.
 
 ## 📁 Project Structure
 
@@ -57,10 +73,12 @@ npm run preview
 Samildanach/
 ├── docs/           # Built files for GitHub Pages
 ├── src/
-│   ├── core/       # State, database, utilities
+│   ├── core/       # State, database, utilities, exporter
 │   ├── components/ # Reusable UI components
 │   ├── panels/     # Main application panels
 │   └── css/        # Layered stylesheets
+├── src-tauri/      # Tauri desktop wrapper
+├── android/        # Capacitor Android project
 ├── package.json
 └── vite.config.js
 ```
@@ -70,7 +88,8 @@ Samildanach/
 - Vanilla JavaScript (ES Modules)
 - IndexedDB via VaultDB
 - Vite (build tool)
-- No frameworks — pure web platform
+- Tauri (desktop)
+- Capacitor (mobile)
 
 ## 📜 License
 
