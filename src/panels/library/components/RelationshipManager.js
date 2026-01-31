@@ -5,6 +5,7 @@
  */
 
 import { getCategoryById } from '../../../core/categories.js';
+import { Utils } from '../../../core/utils.js';
 import { getRelationshipById, getAllRelationshipTypes, RELATIONSHIP_TYPES } from '../../../core/relationships.js';
 import { Modal } from '../../../components/modal/index.js';
 
@@ -109,7 +110,7 @@ export class RelationshipManager {
                     const inverseType = RELATIONSHIP_TYPES[relType.inverse];
                     const row = document.createElement('div');
                     row.className = 'back-ref-item';
-                    row.innerHTML = `<span>${otherCat.icon}</span> ${other.data.name || 'Untitled'} <span class="text-muted">(${inverseType?.label || relType.label})</span>`;
+                    row.innerHTML = `<span>${otherCat.icon}</span> ${Utils.escapeHtml(other.data.name || 'Untitled')} <span class="text-muted">(${inverseType?.label || relType.label})</span>`;
                     row.onclick = () => { if (this.onNavigate) this.onNavigate(other); };
                     backRefsEl.appendChild(row);
                 });

@@ -9,6 +9,7 @@ import { RulesDB } from '../../core/rules-db.js';
 import { FlowsDB } from '../../core/flows-db.js';
 import { Exporter } from '../../core/exporter.js';
 import { State } from '../../core/state.js';
+import { Utils } from '../../core/utils.js';
 import { getAllCategories } from '../../core/categories.js';
 import { Toast } from '../../components/toast/index.js';
 
@@ -41,10 +42,10 @@ export const ProjectPanel = {
                     <!-- Header -->
                     <div class="project-header">
                         <div class="project-icon">📖</div>
-                        <input id="proj-title" type="text" value="${State.project.title}" 
+                        <input id="proj-title" type="text" value="${Utils.escapeHtml(State.project.title)}" 
                             placeholder="Setting Title" class="project-title">
                         <div class="project-author">
-                            <input id="proj-author" type="text" value="${State.project.author}" 
+                            <input id="proj-author" type="text" value="${Utils.escapeHtml(State.project.author)}" 
                                 placeholder="Author Name">
                         </div>
                     </div>
@@ -72,25 +73,25 @@ export const ProjectPanel = {
                         <div class="details-grid">
                             <div class="detail-field">
                                 <label class="label">Version</label>
-                                <input id="proj-version" type="text" value="${State.project.version}" class="input">
+                                <input id="proj-version" type="text" value="${Utils.escapeHtml(State.project.version)}" class="input">
                             </div>
                             <div class="detail-field">
                                 <label class="label">Genre</label>
-                                <input id="proj-genre" type="text" value="${State.project.genre}" 
+                                <input id="proj-genre" type="text" value="${Utils.escapeHtml(State.project.genre)}" 
                                     placeholder="Fantasy, Sci-Fi, Horror..." class="input">
                             </div>
                         </div>
                         
                         <div class="detail-field">
                             <label class="label">Compatible Game System</label>
-                            <input id="proj-system" type="text" value="${State.project.system}" 
+                            <input id="proj-system" type="text" value="${Utils.escapeHtml(State.project.system)}" 
                                 placeholder="D&D 5e, Pathfinder 2e, Fate Core..." class="input">
                         </div>
 
                         <div class="detail-field" style="margin-top: 16px;">
                             <label class="label">Description</label>
                             <textarea id="proj-description" rows="4" 
-                                placeholder="Describe your setting..." class="textarea">${State.project.description}</textarea>
+                                placeholder="Describe your setting..." class="textarea">${Utils.escapeHtml(State.project.description)}</textarea>
                         </div>
                     </div>
 

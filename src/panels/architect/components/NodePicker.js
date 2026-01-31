@@ -10,6 +10,7 @@ import { RulesDB } from '../../../core/rules-db.js';
 import { FlowsDB } from '../../../core/flows-db.js';
 import { getCategoryById, getAllCategories } from '../../../core/categories.js';
 import { getRuleCategoryById, getAllRuleCategories } from '../../../core/rules-categories.js';
+import { Utils } from '../../../core/utils.js';
 
 // Node type definitions
 export const NODE_TYPES = {
@@ -128,7 +129,7 @@ export class NodePicker {
                     const btn = document.createElement('button');
                     btn.className = 'btn btn-secondary';
                     btn.style.cssText = 'justify-content:flex-start; padding:8px 12px; text-align:left;';
-                    btn.innerHTML = `<span style="margin-right:8px;">${cat?.icon || '📄'}</span> ${entry.data.name || 'Untitled'}`;
+                    btn.innerHTML = `<span style="margin-right:8px;">${cat?.icon || '📄'}</span> ${Utils.escapeHtml(entry.data.name || 'Untitled')}`;
                     btn.onclick = () => {
                         if (this.onSelect) {
                             this.onSelect({
@@ -165,7 +166,7 @@ export class NodePicker {
                     const btn = document.createElement('button');
                     btn.className = 'btn btn-secondary';
                     btn.style.cssText = 'justify-content:flex-start; padding:8px 12px; text-align:left;';
-                    btn.innerHTML = `<span style="margin-right:8px;">${cat?.icon || '📖'}</span> ${rule.data.name || 'Untitled'}`;
+                    btn.innerHTML = `<span style="margin-right:8px;">${cat?.icon || '📖'}</span> ${Utils.escapeHtml(rule.data.name || 'Untitled')}`;
                     btn.onclick = () => {
                         if (this.onSelect) {
                             this.onSelect({
@@ -201,7 +202,7 @@ export class NodePicker {
                     const btn = document.createElement('button');
                     btn.className = 'btn btn-secondary';
                     btn.style.cssText = 'justify-content:flex-start; padding:8px 12px; text-align:left;';
-                    btn.innerHTML = `<span style="margin-right:8px;">📦</span> ${flow.name}`;
+                    btn.innerHTML = `<span style="margin-right:8px;">📦</span> ${Utils.escapeHtml(flow.name)}`;
                     btn.onclick = () => {
                         if (this.onSelect) {
                             this.onSelect({

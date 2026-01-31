@@ -7,6 +7,7 @@ import { LLM } from '../../core/llm.js';
 import { VaultDB } from '../../core/vault.js';
 import { getAllCategories } from '../../core/categories.js';
 import { generateId } from '../../core/utils.js';
+import { Utils } from '../../core/utils.js';
 import { Modal } from '../../components/modal/index.js';
 import { Toast } from '../../components/toast/index.js';
 
@@ -94,7 +95,7 @@ export const ScribePanel = {
                                                 <input type="checkbox" 
                                                     value="${e.id}" 
                                                     ${state.selectedEntries.includes(e.id) ? 'checked' : ''}>
-                                                <span>${e.data.name || 'Untitled'}</span>
+                                                <span>${Utils.escapeHtml(e.data.name || 'Untitled')}</span>
                                             </label>
                                         `).join('')}
                                     </div>
@@ -205,7 +206,7 @@ export const ScribePanel = {
 
             chatLog.innerHTML = state.history.map(msg => `
                 <div class="chat-bubble ${msg.role}">
-                    <div class="bubble-content">${msg.content.replace(/\n/g, '<br>')}</div>
+                    <div class="bubble-content">${Utils.escapeHtml(msg.content).replace(/\n/g, '<br>')}</div>
                     <div class="bubble-meta">
                         <span>${msg.role === 'user' ? 'You' : '✍️ Scribe'}</span>
                         <button class="btn-copy" data-content="${encodeURIComponent(msg.content)}" title="Copy">📋</button>

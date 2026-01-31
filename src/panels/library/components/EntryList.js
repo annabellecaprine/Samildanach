@@ -5,6 +5,7 @@
  */
 
 import { getCategoryById, getAllCategories } from '../../../core/categories.js';
+import { Utils } from '../../../core/utils.js';
 
 export class EntryList {
     constructor(container, options = {}) {
@@ -97,7 +98,7 @@ export class EntryList {
             el.className = 'list-item' + (isActive ? ' active' : '');
             el.innerHTML = `
                 <span>${cat.icon}</span>
-                <span class="flex-1" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${item.data.name || 'Untitled'}</span>
+                <span class="flex-1" style="overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${Utils.escapeHtml(item.data.name || 'Untitled')}</span>
             `;
             el.onclick = () => { if (this.onSelect) this.onSelect(item); };
             this.listEl.appendChild(el);

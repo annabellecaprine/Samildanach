@@ -5,6 +5,7 @@
 
 import { Dice } from '../../core/dice.js';
 import { Simulator } from '../../core/simulator.js';
+import { Utils } from '../../core/utils.js';
 import { Toast } from '../../components/toast/index.js';
 
 export const LaboratoryPanel = {
@@ -99,7 +100,7 @@ export const LaboratoryPanel = {
 
             const result = Dice.roll(expr);
             if (result.error) {
-                resultEl.innerHTML = `<span style="color:var(--status-error);">${result.error}</span>`;
+                resultEl.innerHTML = `<span style="color:var(--status-error);">${Utils.escapeHtml(result.error)}</span>`;
             } else {
                 resultEl.innerHTML = `
                     <div><strong>Rolls:</strong> [${result.rolls.join(', ')}]</div>
@@ -184,11 +185,11 @@ export const LaboratoryPanel = {
             cmpResults.style.display = 'block';
             cmpResults.innerHTML = `
                 <div class="compare-stat">
-                    <strong>${expr1}</strong> wins <span class="highlight">${result.comparison.win1Pct}%</span> of the time
+                    <strong>${Utils.escapeHtml(expr1)}</strong> wins <span class="highlight">${result.comparison.win1Pct}%</span> of the time
                     <small>(avg: ${result.expr1.stats.mean})</small>
                 </div>
                 <div class="compare-stat">
-                    <strong>${expr2}</strong> wins <span class="highlight">${result.comparison.win2Pct}%</span> of the time
+                    <strong>${Utils.escapeHtml(expr2)}</strong> wins <span class="highlight">${result.comparison.win2Pct}%</span> of the time
                     <small>(avg: ${result.expr2.stats.mean})</small>
                 </div>
                 <div class="compare-stat tie">

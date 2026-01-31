@@ -39,8 +39,8 @@ export const SettingsPanel = {
                             ` : configs.map(cfg => `
                                 <div class="config-card ${cfg.id === activeConfig?.id ? 'active' : ''}" data-id="${cfg.id}">
                                     <div class="config-info">
-                                        <div class="config-name">${cfg.name || 'Unnamed'}</div>
-                                        <div class="config-provider">${PROVIDER_PRESETS.find(p => p.id === cfg.provider)?.label || cfg.provider} • ${cfg.model}</div>
+                                        <div class="config-name">${Utils.escapeHtml(cfg.name || 'Unnamed')}</div>
+                                        <div class="config-provider">${PROVIDER_PRESETS.find(p => p.id === cfg.provider)?.label || Utils.escapeHtml(cfg.provider)} • ${Utils.escapeHtml(cfg.model)}</div>
                                     </div>
                                     <div class="config-actions">
                                         <button class="btn btn-ghost btn-sm btn-activate" title="Set Active">✓</button>
@@ -191,7 +191,7 @@ export const SettingsPanel = {
                 await LLM.testConfig(config);
                 testResult.innerHTML = '<span class="test-success">✓ Connection successful!</span>';
             } catch (e) {
-                testResult.innerHTML = `<span class="test-error">✗ ${e.message}</span>`;
+                testResult.innerHTML = `<span class="test-error">✗ ${Utils.escapeHtml(e.message)}</span>`;
             }
 
             btn.disabled = false;
