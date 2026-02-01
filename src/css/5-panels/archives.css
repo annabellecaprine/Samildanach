@@ -37,6 +37,52 @@
     margin: 0;
 }
 
+/* Collection Filter */
+.collection-filter {
+    display: flex;
+    gap: 8px;
+    padding: 8px 16px;
+    border-bottom: 1px solid var(--border-subtle);
+}
+
+.collection-filter select {
+    flex: 1;
+}
+
+/* Collections Manager */
+.collections-manager {
+    min-width: 300px;
+}
+
+.add-collection-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.add-collection-row input {
+    flex: 1;
+}
+
+.collections-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.collection-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: var(--bg-surface);
+    border-radius: 6px;
+}
+
+.collection-name {
+    font-size: 14px;
+}
+
 /* Document List */
 .documents-list {
     flex: 1;
@@ -195,6 +241,38 @@
     background: var(--bg-elevated);
 }
 
+/* Library Links */
+.library-links {
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.link-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+}
+
+.link-info {
+    flex: 1;
+}
+
+.link-name {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.link-meta {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
 /* Tags */
 .tags-container {
     display: flex;
@@ -252,4 +330,64 @@
     font-size: 13px;
     line-height: 1.5;
     color: var(--text-primary);
+}
+
+/* Ask Document Chat */
+.ask-doc-chat {
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+}
+
+.chat-history {
+    flex: 1;
+    overflow-y: auto;
+    padding: 12px;
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    margin-bottom: 12px;
+    background: var(--bg-surface);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.chat-msg {
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.5;
+    max-width: 85%;
+}
+
+.chat-msg.system {
+    align-self: center;
+    background: var(--bg-deep);
+    color: var(--text-muted);
+    font-size: 13px;
+    text-align: center;
+}
+
+.chat-msg.user {
+    align-self: flex-end;
+    background: var(--accent-primary);
+    color: #fff;
+    border-radius: 12px 12px 0 12px;
+}
+
+.chat-msg.assistant {
+    align-self: flex-start;
+    background: var(--bg-elevated);
+    border: 1px solid var(--border-subtle);
+    border-radius: 12px 12px 12px 0;
+}
+
+.chat-input-area {
+    display: flex;
+    gap: 8px;
+}
+
+.chat-input-area textarea {
+    flex: 1;
+    resize: none;
 }
