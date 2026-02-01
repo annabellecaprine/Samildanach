@@ -8,6 +8,7 @@ import { Utils } from './utils.js';
 import { VaultDB } from './vault.js';
 import { RulesDB } from './rules-db.js';
 import { FlowsDB } from './flows-db.js';
+import { ArchivesDB, DOC_STATUS } from './archives-db.js';
 import { State } from './state.js';
 import { getCategoryById, getAllCategories } from './categories.js';
 import { getRuleCategoryById, getAllRuleCategories } from './rules-categories.js';
@@ -18,7 +19,9 @@ export const Exporter = {
      * Export as JSON bundle (complete data)
      * @returns {Object} Export data object
      */
-    async toJSON() {
+    async toJSON(options = {}) {
+        const { includeArchiveText = false } = options;
+
         await VaultDB.init();
         const entries = await VaultDB.list();
 
@@ -28,13 +31,36 @@ export const Exporter = {
         await FlowsDB.init();
         const flows = await FlowsDB.list();
 
+        // Archives - export metadata and optionally full text
+        await ArchivesDB.init();
+        const allDocs = await ArchivesDB.listDocuments();
+        const archives = allDocs.map(doc => {
+            const exported = {
+                id: doc.id,
+                filename: doc.filename,
+                uploadDate: doc.uploadDate,
+                status: doc.status,
+                tags: doc.tags || [],
+                modelVersion: doc.modelVersion,
+                chunkCount: doc.chunks?.length || 0
+            };
+            // Optionally include full text (can be large)
+            if (includeArchiveText && doc.status === DOC_STATUS.READY) {
+                exported.rawText = doc.rawText;
+                exported.chunks = doc.chunks;
+                exported.vectors = doc.vectors;
+            }
+            return exported;
+        });
+
         return {
             meta: { ...State.project },
             entries: entries,
             rules: rules,
             flows: flows,
+            archives: archives,
             exportedAt: new Date().toISOString(),
-            version: '2.0',
+            version: '2.1',
             format: 'samildanach-json'
         };
     },

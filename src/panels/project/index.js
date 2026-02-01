@@ -7,6 +7,8 @@
 import { VaultDB } from '../../core/vault.js';
 import { RulesDB } from '../../core/rules-db.js';
 import { FlowsDB } from '../../core/flows-db.js';
+import { ArchivesDB, DOC_STATUS } from '../../core/archives-db.js';
+import { uploadDocument } from '../../core/archive-processor.js';
 import { Exporter } from '../../core/exporter.js';
 import { State } from '../../core/state.js';
 import { Utils } from '../../core/utils.js';
@@ -211,8 +213,24 @@ export const ProjectPanel = {
                     counts.flows = importData.flows.length;
                 }
 
+                // Import Archives
+                let archiveCount = 0;
+                if (importData.archives && Array.isArray(importData.archives)) {
+                    await ArchivesDB.init();
+                    for (const archiveDoc of importData.archives) {
+                        // If full text is included, re-process the document
+                        if (archiveDoc.rawText) {
+                            await uploadDocument(archiveDoc.filename, archiveDoc.rawText);
+                            archiveCount++;
+                        }
+                        // If only metadata, we can store it but won't have embeddings
+                        // Skip metadata-only imports for now (user can re-upload)
+                    }
+                }
+
                 // alert(`Imported:\n- ${counts.entries} Library Entries\n- ${counts.rules} Rules\n- ${counts.flows} Flows`);
-                Toast.show(`Imported: ${counts.entries} Items, ${counts.rules} Rules, ${counts.flows} Flows`, 'success');
+                const archiveMsg = archiveCount > 0 ? `, ${archiveCount} Archives` : '';
+                Toast.show(`Imported: ${counts.entries} Items, ${counts.rules} Rules, ${counts.flows} Flows${archiveMsg}`, 'success');
                 setTimeout(() => location.reload(), 1500);
             } catch (err) {
                 console.error(err);

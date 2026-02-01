@@ -167,6 +167,34 @@
     margin: 0;
 }
 
+.section-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Tag Suggestions */
+.suggestion-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.suggestion-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: var(--bg-surface);
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.suggestion-item:hover {
+    background: var(--bg-elevated);
+}
+
 /* Tags */
 .tags-container {
     display: flex;

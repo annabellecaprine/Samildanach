@@ -6,6 +6,7 @@
 
 import { Utils } from '../../../core/utils.js';
 import { Modal } from '../../../components/modal/index.js';
+import { suggestTags } from '../../../core/auto-tagger.js';
 
 export class DocumentView {
     constructor(container, options = {}) {
@@ -67,9 +68,12 @@ export class DocumentView {
                 </div>
 
                 <div class="doc-section">
-                    <div class="section-header">
+                        <div class="section-header">
                         <h3 class="section-title">Tags</h3>
-                        <button id="btn-add-tag" class="btn btn-ghost btn-sm">+ Add</button>
+                        <div class="section-actions">
+                            <button id="btn-suggest-tags" class="btn btn-ghost btn-sm">✨ Suggest</button>
+                            <button id="btn-add-tag" class="btn btn-ghost btn-sm">+ Add</button>
+                        </div>
                     </div>
                     <div id="tags-container" class="tags-container">
                         ${tagsHtml || '<span class="text-muted">No tags</span>'}
@@ -113,6 +117,58 @@ export class DocumentView {
                     this.render();
                 }
             }
+        };
+
+        // Suggest tags handler (auto-tagging)
+        this.container.querySelector('#btn-suggest-tags').onclick = async () => {
+            const text = doc.rawText || (doc.chunks || []).join('\n\n');
+            if (!text) {
+                return;
+            }
+
+            const suggestions = suggestTags(text, doc.tags || [], 5);
+            if (suggestions.length === 0) {
+                return;
+            }
+
+            // Show suggestions to user
+            const tagsHtml = suggestions.map(tag =>
+                `<label class="suggestion-item"><input type="checkbox" value="${tag}" checked> ${tag}</label>`
+            ).join('');
+
+            const content = document.createElement('div');
+            content.innerHTML = `<p>Suggested tags based on document content:</p><div class="suggestion-list">${tagsHtml}</div>`;
+
+            const modal = new Modal({
+                title: 'Suggested Tags',
+                content,
+                actions: [
+                    { label: 'Cancel', className: 'btn btn-secondary', onClick: (m) => m.close() },
+                    {
+                        label: 'Add Selected',
+                        className: 'btn btn-primary',
+                        onClick: async (m) => {
+                            const selected = Array.from(content.querySelectorAll('input:checked'))
+                                .map(cb => cb.value);
+
+                            if (selected.length > 0) {
+                                if (!doc.tags) doc.tags = [];
+                                for (const tag of selected) {
+                                    if (!doc.tags.includes(tag)) {
+                                        doc.tags.push(tag);
+                                    }
+                                }
+                                if (this.options.onTagsChange) {
+                                    await this.options.onTagsChange(doc, doc.tags);
+                                }
+                                this.render();
+                            }
+                            m.close();
+                        }
+                    }
+                ]
+            });
+            modal.show();
         };
 
         // Remove tag handlers
