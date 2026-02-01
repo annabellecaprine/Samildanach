@@ -100,20 +100,19 @@ export class DocumentView {
         };
 
         // Add tag handler
-        this.container.querySelector('#btn-add-tag').onclick = () => {
-            Modal.prompt('Add Tag', 'Enter tag name:', async (value) => {
-                if (value && value.trim()) {
-                    const tag = value.trim();
-                    if (!doc.tags) doc.tags = [];
-                    if (!doc.tags.includes(tag)) {
-                        doc.tags.push(tag);
-                        if (this.options.onTagsChange) {
-                            await this.options.onTagsChange(doc, doc.tags);
-                        }
-                        this.render();
+        this.container.querySelector('#btn-add-tag').onclick = async () => {
+            const value = await Modal.prompt('Add Tag', 'Enter tag name:');
+            if (value && value.trim()) {
+                const tag = value.trim();
+                if (!doc.tags) doc.tags = [];
+                if (!doc.tags.includes(tag)) {
+                    doc.tags.push(tag);
+                    if (this.options.onTagsChange) {
+                        await this.options.onTagsChange(doc, doc.tags);
                     }
+                    this.render();
                 }
-            });
+            }
         };
 
         // Remove tag handlers
