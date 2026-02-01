@@ -8,6 +8,10 @@ import { State } from './core/state.js';
 import { Toast } from './components/toast/index.js';
 import { Tour } from './components/tour/index.js';
 
+// Dev: Archives Test (remove after validation)
+import { testArchives } from './core/dev-archives-test.js';
+window.testArchives = testArchives;
+
 // Import Panels
 import { ProjectPanel } from './panels/project/index.js';
 import { LibraryPanel } from './panels/library/index.js';
