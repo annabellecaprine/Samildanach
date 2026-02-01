@@ -10,6 +10,9 @@ import { generateId } from '../../core/utils.js';
 import { Utils } from '../../core/utils.js';
 import { Modal } from '../../components/modal/index.js';
 import { Toast } from '../../components/toast/index.js';
+import { ArchivesDB, DOC_STATUS } from '../../core/archives-db.js';
+import { embedQuery } from '../../core/query-embedder.js';
+import { findSimilar, flattenChunks } from '../../core/vector-search.js';
 
 const STORAGE_KEY = 'samildanach_scribe_state';
 
@@ -52,6 +55,7 @@ export const ScribePanel = {
         if (!state.history) state.history = [];
         if (!state.selectedEntries) state.selectedEntries = [];
         if (!state.sessions) state.sessions = {};
+        if (!state.selectedArchives) state.selectedArchives = [];
 
         const saveState = () => localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 
@@ -59,6 +63,11 @@ export const ScribePanel = {
         await VaultDB.init();
         const entries = await VaultDB.list();
         const categories = getAllCategories();
+
+        // Load Archives
+        await ArchivesDB.init();
+        const archiveDocs = await ArchivesDB.listDocuments();
+        const readyDocs = archiveDocs.filter(d => d.status === DOC_STATUS.READY);
 
         container.innerHTML = `
             <div class="scribe-layout">
@@ -102,6 +111,22 @@ export const ScribePanel = {
                                 `;
         }).join('')}
                             ${entries.length === 0 ? '<div class="empty-hint">No Library entries yet</div>' : ''}
+                        </div>
+                    </div>
+
+                    <!-- Archives Context -->
+                    <div class="sidebar-section">
+                        <div class="section-label">Archives Context</div>
+                        <div class="archive-list">
+                            ${readyDocs.length === 0 ? '<div class="empty-hint">Upload documents in Archives panel</div>' : ''}
+                            ${readyDocs.map(doc => `
+                                <label class="entry-checkbox archive-checkbox">
+                                    <input type="checkbox" 
+                                        data-archive-id="${doc.id}" 
+                                        ${state.selectedArchives.includes(doc.id) ? 'checked' : ''}>
+                                    <span>🏛️ ${Utils.escapeHtml(doc.filename)}</span>
+                                </label>
+                            `).join('')}
                         </div>
                     </div>
 
@@ -177,7 +202,7 @@ export const ScribePanel = {
         });
 
         // Entry checkboxes
-        container.querySelectorAll('.entry-checkbox input').forEach(cb => {
+        container.querySelectorAll('.entry-checkbox input:not(#archives-toggle)').forEach(cb => {
             cb.onchange = () => {
                 const id = cb.value;
                 if (cb.checked) {
@@ -186,6 +211,21 @@ export const ScribePanel = {
                     }
                 } else {
                     state.selectedEntries = state.selectedEntries.filter(e => e !== id);
+                }
+                saveState();
+            };
+        });
+
+        // Archives document checkboxes
+        container.querySelectorAll('.archive-checkbox input').forEach(cb => {
+            cb.onchange = () => {
+                const id = cb.dataset.archiveId;
+                if (cb.checked) {
+                    if (!state.selectedArchives.includes(id)) {
+                        state.selectedArchives.push(id);
+                    }
+                } else {
+                    state.selectedArchives = state.selectedArchives.filter(a => a !== id);
                 }
                 saveState();
             };
@@ -312,7 +352,42 @@ export const ScribePanel = {
                     throw new Error('No API configuration. Go to Settings to add one.');
                 }
 
-                const systemPrompt = generateSystemPrompt();
+                let systemPrompt = generateSystemPrompt();
+
+                // Archives vector search
+                if (state.selectedArchives.length > 0) {
+                    try {
+                        sendBtn.textContent = 'Searching archives...';
+
+                        // Fetch fresh documents at query time, filtered by selection
+                        const freshDocs = await ArchivesDB.listDocuments();
+                        const selectedDocs = freshDocs.filter(d =>
+                            d.status === DOC_STATUS.READY &&
+                            state.selectedArchives.includes(d.id)
+                        );
+                        console.log('[Scribe] Selected archive docs:', selectedDocs.length);
+
+                        if (selectedDocs.length > 0) {
+                            const queryVector = await embedQuery(text);
+                            const allChunks = flattenChunks(selectedDocs);
+                            console.log('[Scribe] Total chunks to search:', allChunks.length);
+
+                            const matches = findSimilar(queryVector, allChunks, 3);
+                            console.log('[Scribe] Matches found:', matches.length, matches.map(m => ({ doc: m.docName, score: m.score })));
+
+                            if (matches.length > 0) {
+                                systemPrompt += `\n\n[ARCHIVE CONTEXT - Relevant excerpts from uploaded documents:]\n`;
+                                matches.forEach((m, i) => {
+                                    systemPrompt += `\n[${m.docName}] (relevance: ${(m.score * 100).toFixed(0)}%)\n${m.text.substring(0, 500)}${m.text.length > 500 ? '...' : ''}\n`;
+                                });
+                                systemPrompt += `\n[END ARCHIVE CONTEXT]`;
+                            }
+                        }
+                        sendBtn.textContent = 'Thinking...';
+                    } catch (archiveErr) {
+                        console.warn('[Scribe] Archives search error:', archiveErr);
+                    }
+                }
 
                 // Prepare history for LLM
                 const historyForLLM = state.history.map(m => ({
