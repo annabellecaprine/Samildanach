@@ -23,6 +23,7 @@ import { ScribePanel } from './panels/scribe/index.js';
 import { ExportPanel } from './panels/export/index.js';
 import { SettingsPanel } from './panels/settings/index.js';
 import { ArchivesPanel } from './panels/archives/index.js';
+import { ClassesPanel } from './panels/classes/index.js';
 
 // Divider marker for sidebar
 const Divider = { divider: true };
@@ -35,6 +36,7 @@ async function init() {
     UI.registerPanel(ProjectPanel.id, ProjectPanel);
     UI.registerPanel(LibraryPanel.id, LibraryPanel);
     UI.registerPanel(GrimoirePanel.id, GrimoirePanel);
+    UI.registerPanel(ClassesPanel.id, ClassesPanel);
 
     // --- Divider ---
     UI.registerPanel('divider1', Divider);

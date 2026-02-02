@@ -1,0 +1,57 @@
+/* Component: Resource Picker */
+
+.resource-picker {
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+    /* Fixed height for modal content */
+    gap: 12px;
+}
+
+.picker-search {
+    flex-shrink: 0;
+}
+
+.picker-list {
+    flex: 1;
+    overflow-y: auto;
+    border: 1px solid var(--border-subtle);
+    border-radius: 6px;
+    background: var(--bg-surface);
+}
+
+.picker-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border-subtle);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.picker-item:last-child {
+    border-bottom: none;
+}
+
+.picker-item:hover {
+    background: var(--bg-elevated);
+}
+
+.picker-item input {
+    margin: 0;
+}
+
+.picker-item-info {
+    flex: 1;
+}
+
+.picker-item-title {
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.picker-item-meta {
+    font-size: 12px;
+    color: var(--text-muted);
+}
